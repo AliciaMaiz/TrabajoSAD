@@ -593,8 +593,8 @@ def random_forest(x_traindev, y_traindev):
     :param x_traindev, y_traindev: Conjunto de datos para realizar la clasificación.
     :type x_traindev, y_traindev: pandas.DataFrame
     """
-    gnb = GaussianNB()
-    gs = GridSearchCV(gnb, param_grid= args.randomForest, cv=5, n_jobs=args.cpu, scoring=args.evaluation, refit=args.best_model)
+
+    gs = GridSearchCV(RandomForestClassifier(), param_grid= args.randomForest, cv=5, n_jobs=args.cpu, scoring=args.evaluation, refit=args.best_model)
     start_time = time.time()
     gs.fit(x_traindev, y_traindev)
     end_time = time.time()
@@ -609,7 +609,9 @@ def random_forest(x_traindev, y_traindev):
     save_model(gs, 'random_forest')
 
 def naive_bayes(x_traindev, y_traindev):
-    gs = GridSearchCV(RandomForestClassifier(),param_grid= args.randomForest, cv=5, n_jobs=args.cpu, scoring=args.evaluation, refit=args.best_model)
+    gnb = GaussianNB()
+    #no estoy segura si se hace con gridsearch o no
+    gs = GridSearchCV(gnb, param_grid= args.randomForest, cv=5, n_jobs=args.cpu, scoring=args.evaluation, refit=args.best_model)
     start_time = time.time()
     gs.fit(x_traindev, y_traindev)
     end_time = time.time()
@@ -617,7 +619,7 @@ def naive_bayes(x_traindev, y_traindev):
 
     print("Tiempo de ejecución:" + Fore.MAGENTA, execution_time, Fore.RESET + "segundos")
 
-    """print(" RESULTADOS DECISION TREE")
+    """print(" RESULTADOS NAIVE BAYES")
     print(gs.cv_results_)"""
 
     #guardamos el modelo utilizando pickle
