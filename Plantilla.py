@@ -41,7 +41,7 @@ from tqdm import tqdm
 
 # Funciones auxiliares
 # dev para evaluar sobre él. probamos con distintos hiperparámetros sobre dev. al final del tod. se prueba con el test para ver si algún algoritmo ha hecho overfitting
-# semilla: para que el random sea "igual" , importante para el ML, en la reproducibidad
+# semilla: para que el random sea "igual", importante para el ML, en la reproducibidad
 def signal_handler(sig, frame):
     """
     Función para manejar la señal SIGINT (Ctrl+C)
