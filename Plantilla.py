@@ -23,6 +23,7 @@ from nltk import WordNetLemmatizer
 from sklearn.calibration import LabelEncoder
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
 from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.naive_bayes import GaussianNB
 from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler, Normalizer, StandardScaler
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.neighbors import KNeighborsClassifier
@@ -592,7 +593,8 @@ def random_forest(x_traindev, y_traindev):
     :param x_traindev, y_traindev: Conjunto de datos para realizar la clasificación.
     :type x_traindev, y_traindev: pandas.DataFrame
     """
-    gs = GridSearchCV(RandomForestClassifier(),param_grid= args.randomForest, cv=5, n_jobs=args.cpu, scoring=args.evaluation, refit=args.best_model)
+    gnb = GaussianNB()
+    gs = GridSearchCV(gnb, param_grid= args.randomForest, cv=5, n_jobs=args.cpu, scoring=args.evaluation, refit=args.best_model)
     start_time = time.time()
     gs.fit(x_traindev, y_traindev)
     end_time = time.time()
@@ -606,6 +608,20 @@ def random_forest(x_traindev, y_traindev):
     #guardamos el modelo utilizando pickle
     save_model(gs, 'random_forest')
 
+def naive_bayes(x_traindev, y_traindev):
+    gs = GridSearchCV(RandomForestClassifier(),param_grid= args.randomForest, cv=5, n_jobs=args.cpu, scoring=args.evaluation, refit=args.best_model)
+    start_time = time.time()
+    gs.fit(x_traindev, y_traindev)
+    end_time = time.time()
+    execution_time = end_time - start_time
+
+    print("Tiempo de ejecución:" + Fore.MAGENTA, execution_time, Fore.RESET + "segundos")
+
+    """print(" RESULTADOS DECISION TREE")
+    print(gs.cv_results_)"""
+
+    #guardamos el modelo utilizando pickle
+    save_model(gs, 'naive_bayes')
 
 def load_model():
     """
