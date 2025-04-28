@@ -610,7 +610,7 @@ def random_forest(x_traindev, y_traindev):
 
 def naive_bayes(x_traindev, y_traindev):
     gnb = GaussianNB()
-    #no estoy segura si se hace con gridsearch o no
+    #no estoy segura si se hace con gridsearch o no.
     gs = GridSearchCV(gnb, param_grid= args.randomForest, cv=5, n_jobs=args.cpu, scoring=args.evaluation, refit=args.best_model)
     start_time = time.time()
     gs.fit(x_traindev, y_traindev)
