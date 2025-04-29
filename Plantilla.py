@@ -420,7 +420,7 @@ def preprocesar_datos():
     :return: Datos preprocesados y divididos en train y test
     """
     # Separamos los datos por tipos
-    global dataç
+    global data
 
     numerical_feature, text_feature, categorical_feature = select_features()
 
