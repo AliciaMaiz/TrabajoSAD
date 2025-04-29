@@ -49,6 +49,10 @@
     "min_samples_split" : [2,5,10],
     "min_samples_leaf": [1,2,4]
   },
+  "naiveBayes": {
+    "priors": [0.7, 0.3, "None"],
+    "var_smoothing": 1e-9
+  },
 
 
 
@@ -103,6 +107,13 @@
       "max_depth": [10, 20],
       "min_samples_split" : [2,5,10,"TB CREO Q PUEDES PRESCINDIR"],
       "min_samples_leaf": [1,2,4]
+    },
+    "naiveBayes": {
+      "priors": [0.7, 0.3, "None", "por defecto es None, así que si queremos por defecto borramos priors"],
+      "info priors": "Especifica manualmente las probabilidades a priori de cada clase. Si se establece, el modelo no calculará las probabilidades a priori automáticamente a partir de los datos de entrenamiento.",
+      "info priors2": "si por ejemplo ponemos [0.7, 0.3], significa que se espera que la clase 0 tenga un 70% de probabilidad y la clase 1 un 30%",
+      "var_smoothing": [1e-9, "por defecto es 1e-9. se utiliza para evitar divisiones por cero o inestabilidad numérica cuando se calculan las probabilidades utilizando la varianza."],
+      "info var_smoothing": "Lo que hace es añadir una pequeña cantidad al denominador (la varianza) durante el cálculo, y esta cantidad es una fracción de la mayor varianza observada en todas las características."
     }
   }
 }
