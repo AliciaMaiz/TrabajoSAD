@@ -761,6 +761,13 @@ if __name__ == "__main__":
                 sys.exit(0)
             except Exception as e:
                 print(e)
+        elif args.algorithm == "naive_bayes":
+            try:
+                naive_bayes(x_traindev, y_traindev)
+                print(Fore.GREEN+"Algoritmo random forest ejecutado con éxito"+Fore.RESET)
+                sys.exit(0)
+            except Exception as e:
+                print(e)
         else:
             print(Fore.RED+"Algoritmo no soportado"+Fore.RESET)
             sys.exit(1)

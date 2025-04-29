@@ -1,0 +1,117 @@
+{
+  "preprocessing": {
+    "drop_features": "none",
+    "unique_category_threshold": 0,
+    "missing_values": ["drop"],
+    "text_processing": {
+      "method": ["tf-idf"],
+      "lowercase": true,
+      "remove_punctuation": true,
+      "stopwords": true,
+      "stemmer": false,
+      "lemmatization": true,
+      "tokenization": true,
+      "sort": true
+    },
+    "sampling":{
+      "type": "oversampling",
+      "percent": [0.6]
+    }
+  },
+  "porcentajetest": 0.20,
+  "nummodelos": 1,
+  "nombremodeloatestear": "modelo_algoritmo_topX",
+  "evaluation": ["accuracy", "precision", "recall", "f1", "precision_micro", "recall_micro", "f1_micro", "precision_macro", "recall_macro", "f1_macro", "precision_weighted", "recall_weighted", "f1_weighted"],
+  "evalaux": "specificity",
+  "best_model": "f1_weighted",
+  "kNN": {
+    "k_min": 1,
+    "k_max": 9,
+    "p_min": 1,
+    "p_max": 6,
+    "n_neighbors": [3,5,7,9],
+    "weights": ["uniform","distance"],
+    "algorithm": ["auto"],
+    "leaf_size": [20,30,40],
+    "p": [1,2]
+  },
+  "decisionTree": {
+    "criterion": ["gini","entropy"],
+    "max_depth":[3,5,10],
+    "min_samples_split": [2,5,10],
+    "min_samples_leaf": [1,2,5]
+  },
+  "randomForest": {
+    "n_estimators": [50,100,200],
+    "max_depth": [10, 20],
+    "min_samples_split" : [2,5,10],
+    "min_samples_leaf": [1,2,4]
+  },
+  "naiveBayes": {
+    "priors": [0.7, 0.3, "None"],
+    "var_smoothing": 1e-9
+  },
+
+
+
+
+  "INFO": {
+    "preprocessing": {
+      "drop_features": "none",
+      "unique_category_threshold": 0,
+      "missing_values": ["impute", "drop"],
+      "impute_strategy": ["mean","median","mode"],
+      "scaling": ["standard(z-score si lo usamos quitamos)","minmax","max", "normalize"],
+      "text_processing": {
+        "method": ["tf-idf","bow"],
+        "lowercase": true,
+        "remove_punctuation": true,
+        "stopwords": true,
+        "stemmer": false,
+        "lemmatization": true,
+        "tokenization": true,
+        "sort": true
+      },
+      "sampling":{
+        "type": "undersampling/oversampling",
+        "percent": ["auto-> Iguala nº de muestras",
+          0.5,"%->0.5 total de las muestras serán clase minoritaria/mayor"]
+      }
+    },
+    "porcentajetest": "porcentaje de test, si porcentajetest=0.2 -> test 20%, traindev 80%",
+    "nummodelos": "nummodelos es de los mejores cuántos modelos queremos guardar",
+    "nombremodeloatestear": "modelo_algoritmo_topX.pkl: en el test, el modelo q queremos utilizar",
+    "evaluation": ["q parámetros queremos guardar en el csv","accuracy,precision,recall,f1,specificity,precision_micro,recall_micro,f1_micro,precision_macro,recall_macro,f1_macro,precision_weighted,recall_weighted,f1_weighted"],
+    "best_model": "el parametro con el cual vamos a decidir el mejor modelo (uno de dentro de evaluation)",
+    "info": "si es binary:todo, los micro=accuracy / si es multiclass: no:las normales y specificity xq no hay única clase negativa / desbalanceadas: macro y weighted + repr que accuracy ",
+    "kNN": {
+      "k_min y k_max": "rango de k (numero de vecinos). si están estos dos no se lee n_neighbors. si queremos vecinos especificos borrar esto y usar el n_neigbors",
+      "p_min y p_max": "lo mismo q con la k, si no queremos rango y queremos valores especificos borrar esto y poner en p los valores",
+      "n_neighbors": ["numero de vecinos (k), por defecto es 5"],
+      "weights": ["uniform o distance","por defecto es uniform"],
+      "algorithm": ["auto","ball_tree","kd_tree","brute","por defecto es auto, q elige el mejor algoritmo (que podría ser ball_tree, kd_tree o brute)"],
+      "leaf_size": [20,30,40,"por defecto es 30. leaf_size se utiliza solo si el algoritmo es ball_tree o kd_tree"],
+      "p": [1,2,"por defecto es 2 (p=1 manhatann, p=2 euclideo)"]
+    },
+    "decisionTree": {
+      "n_estimators" : [10,20,100, "num arboles de decision"],
+      "criterion": ["gini","entropy","función para evaluar calidad de una división"],
+      "max_depth":[3,5,10," profundidad máxima que puede alcanzar el árbol"],
+      "min_samples_split": [2,5,10, "SI NO TE LO PIDE CREO Q PUEDES PRESCINDIR Número mínimo de muestras requeridas para dividir un nodo."],
+      "min_samples_leaf": [1,2,5,"num ejemplos por hoja"]
+    },
+    "randomForest": {
+      "n_estimators": [50,100,200],
+      "max_depth": [10, 20],
+      "min_samples_split" : [2,5,10,"TB CREO Q PUEDES PRESCINDIR"],
+      "min_samples_leaf": [1,2,4]
+    },
+    "naiveBayes": {
+      "priors": [0.7, 0.3, "None", "por defecto es None, así que si queremos por defecto borramos priors"],
+      "info priors": "Especifica manualmente las probabilidades a priori de cada clase. Si se establece, el modelo no calculará las probabilidades a priori automáticamente a partir de los datos de entrenamiento.",
+      "info priors2": "si por ejemplo ponemos [0.7, 0.3], significa que se espera que la clase 0 tenga un 70% de probabilidad y la clase 1 un 30%",
+      "var_smoothing": [1e-9, "por defecto es 1e-9. se utiliza para evitar divisiones por cero o inestabilidad numérica cuando se calculan las probabilidades utilizando la varianza."],
+      "info var_smoothing": "Lo que hace es añadir una pequeña cantidad al denominador (la varianza) durante el cálculo, y esta cantidad es una fracción de la mayor varianza observada en todas las características."
+    }
+  }
+}
