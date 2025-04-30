@@ -1,5 +1,8 @@
 Ana Victoria Cernatescu, Maira Gabriela Herbas, Alicia Maizkurrena e Iratxe Urrutia Sordo
 
+Para instalar dependencias:
+    pip install -r requirements.txt
+
 Para entrenar:
     python Plantilla.py -m train -f archivo.csv -j archivo.json -a algoritmo -p target --debug
 Para testear:
