@@ -11,6 +11,10 @@
       "lemmatization": true,
       "tokenization": true,
       "sort": true
+    },
+        "sampling":{
+      "type": "oversampling",
+      "percent": 0.5
     }
   },
   "porcentajetest": 0.20,
