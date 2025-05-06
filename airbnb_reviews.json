@@ -14,7 +14,7 @@
     },
         "sampling":{
       "type": "oversampling",
-      "percent": 0.5
+      "percent": "auto"
     }
   },
   "porcentajetest": 0.20,
