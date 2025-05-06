@@ -1,3 +1,4 @@
+#obtener reviews de airbnb y guardar en un csv
 #ollama run gemma2:2b
 #ollama pull gemma2:2b
 #python traduccion.py --sample 5
@@ -20,7 +21,7 @@ Translation: {translation}"""
 prompt = PromptTemplate.from_template(template)
 model = OllamaLLM(model=args.model,temperature=0) #deterministic (Aitzi dixit, esto también hay que modificarlo para que no se limite a devolver solo una palabra. temperature=0 es para que sea determinista y siempre de lo mismo)
 chain = prompt | model
-dataset="MongoDB/airbnb_embeddings"
+dataset="MongoDB/airbnb_embeddings" #cambiar
 airBB = load_dataset(dataset) #check huggingface datasets for details
 for n,instance in enumerate(airBB[args.split]):
     if n==args.sample: break #speed up things use only the first n instances
