@@ -170,6 +170,14 @@ def process_missing_values(numerical_feature, categorical_feature):
             elif 'drop' in args.preprocessing["missing_values"]:
                 categorical_feature[c].dropna(inplace=True)
 
+        if 'impute' in args.preprocessing["missing_values"]: #si impute si o si va a ser la moda para este campo xq o 1 o 0
+            moda = data[args.prediction].mode()[0]
+            data[args.prediction].fillna(moda, inplace=True)
+        elif 'drop' in args.preprocessing["missing_values"]:
+            # print("----------------------'drop' in args.preprocessing[] PARA PREDICTION")
+            #args.prediction[c].dropna(inplace=True)
+            data.dropna(subset=[args.prediction], inplace=True)
+
         data[numerical_feature.columns] = numerical_feature  # Actualiza columnas numéricas en 'data'
         data[categorical_feature.columns] = categorical_feature
         print(Fore.LIGHTMAGENTA_EX + "Valores faltantes tratados correctamente :)" + Fore.RESET)
