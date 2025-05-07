@@ -39,8 +39,10 @@ df = pd.read_csv("./airbnb.csv")
 print(df.columns)
 print(df.size)
 countries=list()
-portugal_reviews=[]
-spain_reviews=[]
+portugal_comments=[]
+spain_comments=[]
+portugal=[]
+spain=[]
 
 for i in range(len(df)):
     el=df.loc[i].address
@@ -51,30 +53,37 @@ for i in range(len(df)):
 
         #filtramos por pais: Portugal (nosotros) y España (competencia)
         if dfEl['json_dict'][0]["country"]=="Portugal":
-            r = df.loc[i].reviews
-            r = ast.literal_eval(r) #convertimos texto plano a lista
+            portugal.append(df.loc[i])
+            r=ast.literal_eval(df.loc[i].reviews)
             for review in r:
-                portugal_reviews.append(review["comments"])
+                if "comments" in review:
+                    portugal_comments.append(review["comments"])
         if dfEl['json_dict'][0]["country"]=="Spain":
-            r = df.loc[i].reviews
-            r = ast.literal_eval(r)
+            spain.append(df.loc[i])
+            r=ast.literal_eval(df.loc[i].reviews)
             for review in r:
-                spain_reviews.append(review["comments"])
-
-    except:
-        print("format error")
+                if "comments" in review:
+                    spain_comments.append(review["comments"])
+    except Exception as e:
+        print("format error: "+str(e))
 
 count = Counter(countries)
 print(count)
 #print(countries)
 
-#convertimos las listas a dataframes
-df_portugal=pd.DataFrame(portugal_reviews)
-df_spain=pd.DataFrame(spain_reviews)
+#convertimos todos los datos de portugal y españa a dataframes
+df_portugal=pd.DataFrame(portugal)
+df_spain=pd.DataFrame(spain)
+
+#convertimos las listas de comentarios(reviews) a dataframes
+df_portugal_comments=pd.DataFrame(portugal_comments,columns=["comments"])
+df_spain_comments=pd.DataFrame(spain_comments,columns=["comments"])
 
 #guardamos en csv
 df_portugal.to_csv("portugal.csv",index=False)
 df_spain.to_csv("spain.csv",index=False)
+df_portugal_comments.to_csv("comments-portugal.csv",index=False)
+df_spain_comments.to_csv("comments-spain.csv",index=False)
 
-print("Archivos portugal.csv y spain.csv guardados correctamente")
+print("Archivos portugal.csv, spain.csv, comments-portugal.csv y comments-spain.csv guardados correctamente")
 

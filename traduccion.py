@@ -25,17 +25,18 @@ prompt = PromptTemplate.from_template(template)
 model = OllamaLLM(model=args.model,temperature=0) #deterministic (Aitzi dixit, esto también hay que modificarlo para que no se limite a devolver solo una palabra. temperature=0 es para que sea determinista y siempre de lo mismo)
 chain = prompt | model
 
-nombre_csv="spain.csv" #csv a traducir
+nombre_csv="comments-portugal.csv" #csv a traducir
 
 df=pd.read_csv(nombre_csv)
 print(df.head())
 traducciones=[]
 
-for n,comment in df.iterrows():
+for n,fila in df.iterrows():
     if n>5: break
     """if comment["0"].strip()=="":
         continue"""
 
+    comment=fila["comments"].strip()
     ans = chain.invoke({'text': comment, 'translation': ''}).strip()  # remove newLine
     traducciones.append(ans)
     print("\n" + Fore.GREEN + "| " + args.model + " | " + args.lang + "-" + args.split + " | n: " + str(n + 1) + Fore.RESET)
@@ -43,7 +44,7 @@ for n,comment in df.iterrows():
     print(Fore.LIGHTMAGENTA_EX + "Traducción: " + Fore.RESET + ans)
 
 #convertimos las lista a dataframe
-df_traducciones=pd.DataFrame(traducciones)
+df_traducciones=pd.DataFrame(traducciones, columns=["comments"])
 
 nombre_salida_csv=os.path.splitext(nombre_csv)[0]+"_traducido.csv" #nombre del csv en el q se van a guardar los comentarios traducidos
 
