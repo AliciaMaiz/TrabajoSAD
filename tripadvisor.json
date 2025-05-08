@@ -3,7 +3,7 @@
     "drop_features": "none",
     "unique_category_threshold": 0,
     "missing_values": ["drop"],
-    "scaling": ["max"],
+
     "text_processing": {
       "method": ["tf-idf","bow"],
       "lowercase": true,
@@ -14,6 +14,7 @@
       "tokenization": true,
       "sort": true
     }
+
   },
   "porcentajetest": 0.20,
   "nummodelos": 1,
@@ -53,7 +54,7 @@
       "unique_category_threshold": 0,
       "missing_values": ["impute", "drop"],
       "impute_strategy": ["mean","median","mode"],
-      "scaling": ["standard(z-score si lo usamos quitamos)","minmax","max", "normalize"],
+
       "text_processing": {
         "method": ["tf-idf"],
         "lowercase": true,
