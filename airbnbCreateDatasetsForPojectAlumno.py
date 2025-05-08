@@ -74,6 +74,7 @@ print(count)
 #convertimos todos los datos de portugal y españa a dataframes
 df_portugal=pd.DataFrame(portugal)
 df_spain=pd.DataFrame(spain)
+df_portugal_spain=pd.concat([df_portugal,df_spain],ignore_index=True)
 
 #convertimos las listas de comentarios(reviews) a dataframes
 df_portugal_comments=pd.DataFrame(portugal_comments,columns=["comments"])
@@ -82,6 +83,7 @@ df_spain_comments=pd.DataFrame(spain_comments,columns=["comments"])
 #guardamos en csv
 df_portugal.to_csv("portugal.csv",index=False)
 df_spain.to_csv("spain.csv",index=False)
+df_portugal_spain.to_csv("portugal_spain.csv",index=False)
 df_portugal_comments.to_csv("comments-portugal.csv",index=False)
 df_spain_comments.to_csv("comments-spain.csv",index=False)
 
