@@ -39,8 +39,6 @@ df = pd.read_csv("./airbnb.csv")
 print(df.columns)
 print(df.size)
 countries=list()
-portugal_comments=[]
-spain_comments=[]
 portugal=[]
 spain=[]
 
@@ -50,20 +48,11 @@ for i in range(len(df)):
     try:
         dfEl['json_dict'] = dfEl['json_string'].apply(convert_to_valid_json)
         countries.append(dfEl['json_dict'][0]["country"])
-
         #filtramos por pais: Portugal (nosotros) y España (competencia)
         if dfEl['json_dict'][0]["country"]=="Portugal":
             portugal.append(df.loc[i])
-            r=ast.literal_eval(df.loc[i].reviews)
-            for review in r:
-                if "comments" in review:
-                    portugal_comments.append(review["comments"])
         if dfEl['json_dict'][0]["country"]=="Spain":
             spain.append(df.loc[i])
-            r=ast.literal_eval(df.loc[i].reviews)
-            for review in r:
-                if "comments" in review:
-                    spain_comments.append(review["comments"])
     except Exception as e:
         print("format error: "+str(e))
 
@@ -76,16 +65,10 @@ df_portugal=pd.DataFrame(portugal)
 df_spain=pd.DataFrame(spain)
 df_portugal_spain=pd.concat([df_portugal,df_spain],ignore_index=True)
 
-#convertimos las listas de comentarios(reviews) a dataframes
-df_portugal_comments=pd.DataFrame(portugal_comments,columns=["comments"])
-df_spain_comments=pd.DataFrame(spain_comments,columns=["comments"])
-
 #guardamos en csv
 df_portugal.to_csv("portugal.csv",index=False)
 df_spain.to_csv("spain.csv",index=False)
 df_portugal_spain.to_csv("portugal_spain.csv",index=False)
-df_portugal_comments.to_csv("comments-portugal.csv",index=False)
-df_spain_comments.to_csv("comments-spain.csv",index=False)
 
-print("Archivos portugal.csv, spain.csv, comments-portugal.csv y comments-spain.csv guardados correctamente")
+print("Archivos portugal.csv, spain.csv y portugal_spain.csv guardados correctamente")
 

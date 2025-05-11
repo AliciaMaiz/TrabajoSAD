@@ -2,14 +2,13 @@
 #ollama run gemma2:2b
 #ollama pull gemma2:2b
 #python traduccion.py --sample 5
+import ast
 import os
 
 import pandas as pd
 from colorama import Fore
 from langchain_core.prompts import PromptTemplate
 from langchain_ollama.llms import OllamaLLM
-from langchain.evaluation import ExactMatchStringEvaluator
-from datasets import load_dataset
 import argparse
 parser=argparse.ArgumentParser(description='casiMedicos ollama LLM evaluation')
 parser.add_argument('--model', type=str, default='gemma2:2b', help='ollama model name')
@@ -25,44 +24,38 @@ prompt = PromptTemplate.from_template(template)
 model = OllamaLLM(model=args.model,temperature=0) #deterministic (Aitzi dixit, esto también hay que modificarlo para que no se limite a devolver solo una palabra. temperature=0 es para que sea determinista y siempre de lo mismo)
 chain = prompt | model
 
-nombre_csv="comments-portugal.csv" #csv a traducir
+nombre_csv="prueba_gen.csv" #csv a traducir
 
-df=pd.read_csv(nombre_csv)
-print(df.head())
 traducciones=[]
+df=pd.read_csv(nombre_csv)
+comentarios=[]
+comentarios_columna=[]
 
 for n,fila in df.iterrows():
-    if n>5: break
-    """if comment["0"].strip()=="":
-        continue"""
+    #print("n: "+str(n))
+    print(fila["_id"])
+    reviews=fila["reviews"]
+    r = ast.literal_eval(reviews)
+    for review in r:
+        if "comments" in review:
+            #print(review["comments"])
+            ans = chain.invoke({'text': review["comments"], 'translation': ''}).strip()  # remove newLine
+            comentarios.append(ans)
+    #print(comentarios)
+    comentarios_columna.append(comentarios)
+    comentarios=[]
 
-    comment=fila["comments"].strip()
-    ans = chain.invoke({'text': comment, 'translation': ''}).strip()  # remove newLine
-    traducciones.append(ans)
-    print("\n" + Fore.GREEN + "| " + args.model + " | " + args.lang + "-" + args.split + " | n: " + str(n + 1) + Fore.RESET)
-    print(Fore.LIGHTMAGENTA_EX + "Comentario original: " + Fore.RESET + comment)
-    print(Fore.LIGHTMAGENTA_EX + "Traducción: " + Fore.RESET + ans)
-
-#convertimos las lista a dataframe
-df_traducciones=pd.DataFrame(traducciones, columns=["comments"])
-
-nombre_salida_csv=os.path.splitext(nombre_csv)[0]+"_traducido.csv" #nombre del csv en el q se van a guardar los comentarios traducidos
+nombre_salida_csv=os.path.splitext(nombre_csv)[0]+"_trad.csv" #nombre del csv en el q se van a guardar los comentarios traducidos
 
 #guardamos en csv
-df_traducciones.to_csv(nombre_salida_csv,index=False)
+df_comentarios_columna = pd.DataFrame({"comments_trad":comentarios_columna})
+df_comentarios_columna.to_csv(nombre_salida_csv,index=False)
 
-"""dataset="MongoDB/airbnb_embeddings" #cambiar
-airBB = load_dataset(dataset) #check huggingface datasets for details
-for n,instance in enumerate(airBB[args.split]):
-    if n==args.sample: break #speed up things use only the first n instances
-    reviews= instance['reviews']
-    if not reviews:
-        continue #si reviews está vacío (reviews=[]), no traducimos
-    comment = reviews[0]['comments']
+#iratxe: haz q se guarden todos los datos y las traducciones aquí, y ya luego tú añades aparte los scores
 
 
-    ans=chain.invoke({'text': comment, 'translation': ''}).strip() #remove newLine
-    print("\n"+Fore.GREEN + "| " + args.model + " | " + dataset + "-" + args.lang + "-" + args.split + " | n: " + str(n + 1) + Fore.RESET)
-    print(Fore.LIGHTMAGENTA_EX+ "Comentario original: " + Fore.RESET + comment)
-    print(Fore.LIGHTMAGENTA_EX+ "Traducción: " + Fore.RESET + ans)"""
+"""ans=chain.invoke({'text': comment, 'translation': ''}).strip() #remove newLine
+print("\n"+Fore.GREEN + "| " + args.model + " | " + dataset + "-" + args.lang + "-" + args.split + " | n: " + str(n + 1) + Fore.RESET)
+print(Fore.LIGHTMAGENTA_EX+ "Comentario original: " + Fore.RESET + comment)
+print(Fore.LIGHTMAGENTA_EX+ "Traducción: " + Fore.RESET + ans)"""
 
