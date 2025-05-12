@@ -1,15 +1,18 @@
-#obtener reviews de airbnb y guardar en un csv
+"""Con portugal_spain.csv, este programa traduce los comentarios que hay en cada propiedad y los guarda en una lista,
+luego las listas de comentarios se convierten en una nueva columna para el csv.
+-Output: portugal_spain_trad.csv (contiene todos los datos de portugal y españa con una columna adicional con los comentarios traducidos).
+"""
 #ollama run gemma2:2b
 #ollama pull gemma2:2b
-#python traduccion.py --sample 5
+
 import ast
 import os
-
 import pandas as pd
 from colorama import Fore
 from langchain_core.prompts import PromptTemplate
 from langchain_ollama.llms import OllamaLLM
 import argparse
+
 parser=argparse.ArgumentParser(description='casiMedicos ollama LLM evaluation')
 parser.add_argument('--model', type=str, default='gemma2:2b', help='ollama model name')
 parser.add_argument('--lang', type=str, default='en', help='language')
@@ -17,14 +20,14 @@ parser.add_argument('--split', type=str, default='train', help='split') #esto lo
 parser.add_argument('--sample', type=int, default=-1, help='sample')
 args=parser.parse_args()
 #(Aitzi  dixit, aquí complicad el prompt lo que necesitéis para evitar la verbosity)
-template = """Supose you are a professional translator. translate into an informal English the following text. Do not give any explanation, just give the best option.
+template = """Supose you are a professional translator. Translate into an informal English the following text. Do not include emojis or explanations. Just return the translated text.
 Text: {text}
 Translation: {translation}"""
 prompt = PromptTemplate.from_template(template)
 model = OllamaLLM(model=args.model,temperature=0) #deterministic (Aitzi dixit, esto también hay que modificarlo para que no se limite a devolver solo una palabra. temperature=0 es para que sea determinista y siempre de lo mismo)
 chain = prompt | model
 
-nombre_csv="prueba1.csv" #csv a traducir
+nombre_csv="portugal.csv" #csv a traducir
 
 traducciones=[]
 df=pd.read_csv(nombre_csv)
@@ -32,7 +35,7 @@ comentarios=[]
 comentarios_columna=[]
 
 for n,fila in df.iterrows():
-    #print("n: "+str(n))
+    print("n: "+str(n))
     print(fila["_id"])
     reviews=fila["reviews"]
     r = ast.literal_eval(reviews)
@@ -48,10 +51,11 @@ for n,fila in df.iterrows():
 nombre_salida_csv=os.path.splitext(nombre_csv)[0]+"_trad.csv" #nombre del csv en el q se van a guardar los comentarios traducidos
 
 #guardamos en csv
-df_comentarios_columna = pd.DataFrame({"comments_trad":comentarios_columna})
-df_comentarios_columna.to_csv(nombre_salida_csv,index=False)
+df["comments_trad"]=comentarios_columna #añadimos la lista de comentarios final del df
+df.to_csv(nombre_salida_csv,index=False) #guardamos el csv que contiene todas las columnas + la columna de comentarios (de portugal y españa)
 
-#iratxe: haz q se guarden todos los datos y las traducciones aquí, y ya luego tú añades aparte los scores
+#df_comentarios_columna = pd.DataFrame({"comments_trad":comentarios_columna}) #esto es para guardar los comentarios traducidos en un csv
+#df_comentarios_columna.to_csv(nombre_salida_csv,index=False)
 
 
 """ans=chain.invoke({'text': comment, 'translation': ''}).strip() #remove newLine

@@ -1,3 +1,12 @@
+"""Con portugal_spain_trad.csv, este programa obtiene los comentarios de cada propiedad, y por cada comentario predice
+el score del usuario basándose en su comentario. Por cada propiedad que contenga una lista de comentarios, se crea una
+lista de scores predichos, y se calcula la media de los scores predichos. Tanto la lista de scores como la media se
+añaden al csv que contiene todos los datos de portugal y españa (incluyendo la columna con los comentarios traducidos).
+-Output: portugal_spain_trad_scores.csv (contiene todos los datos de portugal y españa con las columnas adicionales de
+comentarios traducidos, scores y scores_media.
+"""
+
+
 import ast
 import os
 import pandas as pd
@@ -19,7 +28,7 @@ prompt = PromptTemplate.from_template(template)
 model = OllamaLLM(model=args.model,temperature=0, num_predict=1) #deterministic (Aitzi dixit, esto también hay que modificarlo para que no se limite a devolver solo una palabra. temperature=0 es para que sea determinista y siempre de lo mismo)
 chain = prompt | model
 
-nombre_csv="prueba1_trad.csv" #csv a predecir (el csv tiene la columna:comments_trad)
+nombre_csv="portugal_spain_trad.csv" #csv a predecir (el csv tiene la columna:comments_trad)
 #en cada fila del csv (en comments_trad) hay una lista de comentarios traducidos que pertenecen a una propiedad de airbnb
 
 

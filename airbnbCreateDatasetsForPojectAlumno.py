@@ -1,10 +1,10 @@
-import ast
+"""Con airbnb.csv, este programa filtra los datos y se queda solo con los de portugal y españa.
+-Output: portugal.csv, spain.csv y portugal_spain.csv (contienen todas las columnas del csv original).
+"""
 
 import pandas as pd
 import json
-import re
 from collections import Counter
-
 
 def convert_to_valid_json(s):
     try:
