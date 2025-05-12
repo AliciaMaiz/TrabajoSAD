@@ -28,7 +28,7 @@ prompt = PromptTemplate.from_template(template)
 model = OllamaLLM(model=args.model,temperature=0, num_predict=1) #deterministic (Aitzi dixit, esto también hay que modificarlo para que no se limite a devolver solo una palabra. temperature=0 es para que sea determinista y siempre de lo mismo)
 chain = prompt | model
 
-nombre_csv="prueba1_trad.csv" #csv a predecir (el csv tiene la columna:comments_trad)
+nombre_csv="portugal_spain_trad.csv" #csv a predecir (el csv tiene la columna:comments_trad)
 #en cada fila del csv (en comments_trad) hay una lista de comentarios traducidos que pertenecen a una propiedad de airbnb
 
 
