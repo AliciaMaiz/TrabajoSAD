@@ -1,3 +1,12 @@
+"""Con portugal_spain_trad.csv, este programa obtiene los comentarios de cada propiedad, y por cada comentario predice
+el score del usuario basándose en su comentario. Por cada propiedad que contenga una lista de comentarios, se crea una
+lista de scores predichos, y se calcula la media de los scores predichos. Tanto la lista de scores como la media se
+añaden al csv que contiene todos los datos de portugal y españa (incluyendo la columna con los comentarios traducidos).
+-Output: portugal_spain_trad_scores.csv (contiene todos los datos de portugal y españa con las columnas adicionales de
+comentarios traducidos, scores y scores_media.
+"""
+
+
 import ast
 import os
 import pandas as pd

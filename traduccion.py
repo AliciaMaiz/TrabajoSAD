@@ -1,15 +1,18 @@
-#obtener reviews de airbnb y guardar en un csv
+"""Con portugal_spain.csv, este programa traduce los comentarios que hay en cada propiedad y los guarda en una lista,
+luego las listas de comentarios se convierten en una nueva columna para el csv.
+-Output: portugal_spain_trad.csv (contiene todos los datos de portugal y españa con una columna adicional con los comentarios traducidos).
+"""
 #ollama run gemma2:2b
 #ollama pull gemma2:2b
-#python traduccion.py --sample 5
+
 import ast
 import os
-
 import pandas as pd
 from colorama import Fore
 from langchain_core.prompts import PromptTemplate
 from langchain_ollama.llms import OllamaLLM
 import argparse
+
 parser=argparse.ArgumentParser(description='casiMedicos ollama LLM evaluation')
 parser.add_argument('--model', type=str, default='gemma2:2b', help='ollama model name')
 parser.add_argument('--lang', type=str, default='en', help='language')
@@ -48,10 +51,11 @@ for n,fila in df.iterrows():
 nombre_salida_csv=os.path.splitext(nombre_csv)[0]+"_trad.csv" #nombre del csv en el q se van a guardar los comentarios traducidos
 
 #guardamos en csv
-df_comentarios_columna = pd.DataFrame({"comments_trad":comentarios_columna})
-df_comentarios_columna.to_csv(nombre_salida_csv,index=False)
+df["comments_trad"]=comentarios_columna #añadimos la lista de comentarios final del df
+df.to_csv(nombre_salida_csv,index=False) #guardamos el csv que contiene todas las columnas + la columna de comentarios (de portugal y españa)
 
-#iratxe: haz q se guarden todos los datos y las traducciones aquí, y ya luego tú añades aparte los scores
+#df_comentarios_columna = pd.DataFrame({"comments_trad":comentarios_columna}) #esto es para guardar los comentarios traducidos en un csv
+#df_comentarios_columna.to_csv(nombre_salida_csv,index=False)
 
 
 """ans=chain.invoke({'text': comment, 'translation': ''}).strip() #remove newLine
