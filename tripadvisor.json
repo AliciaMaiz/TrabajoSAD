@@ -5,7 +5,7 @@
     "missing_values": ["drop"],
 
     "text_processing": {
-      "method": ["tf-idf","bow"],
+      "method": ["tf-idf"],
       "lowercase": true,
       "remove_punctuation": true,
       "stopwords": true,
@@ -13,6 +13,10 @@
       "lemmatization": true,
       "tokenization": true,
       "sort": true
+    },
+        "sampling":{
+      "type": "undersampling",
+      "percent": "auto"
     }
 
   },
@@ -23,8 +27,8 @@
   "best_model": "f1_micro",
   "kNN": {
     "n_neighbors": [3,5,7,9],
-    "weights": ["uniform","distance"],
-    "algorithm": ["auto","ball_tree","kd_tree","brute"],
+    "weights": ["uniform"],
+    "algorithm": ["auto"],
     "leaf_size": [20,30,40],
     "p": [1,2]
   },
