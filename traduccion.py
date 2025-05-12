@@ -20,14 +20,14 @@ parser.add_argument('--split', type=str, default='train', help='split') #esto lo
 parser.add_argument('--sample', type=int, default=-1, help='sample')
 args=parser.parse_args()
 #(Aitzi  dixit, aquí complicad el prompt lo que necesitéis para evitar la verbosity)
-template = """Supose you are a professional translator. translate into an informal English the following text. Do not give any explanation, just give the best option.
+template = """Supose you are a professional translator. Translate into an informal English the following text. Do not include emojis or explanations. Just return the translated text.
 Text: {text}
 Translation: {translation}"""
 prompt = PromptTemplate.from_template(template)
 model = OllamaLLM(model=args.model,temperature=0) #deterministic (Aitzi dixit, esto también hay que modificarlo para que no se limite a devolver solo una palabra. temperature=0 es para que sea determinista y siempre de lo mismo)
 chain = prompt | model
 
-nombre_csv="portugal_spain.csv" #csv a traducir
+nombre_csv="portugal.csv" #csv a traducir
 
 traducciones=[]
 df=pd.read_csv(nombre_csv)
@@ -35,7 +35,7 @@ comentarios=[]
 comentarios_columna=[]
 
 for n,fila in df.iterrows():
-    #print("n: "+str(n))
+    print("n: "+str(n))
     print(fila["_id"])
     reviews=fila["reviews"]
     r = ast.literal_eval(reviews)
