@@ -18,6 +18,10 @@ parser.add_argument('--model', type=str, default='gemma2:2b', help='ollama model
 parser.add_argument('--lang', type=str, default='en', help='language')
 parser.add_argument('--split', type=str, default='train', help='split') #esto lo he cambiado (Aitzi dixit)
 parser.add_argument('--sample', type=int, default=-1, help='sample')
+
+parser.add_argument('--start', type=int, default=0, help='Fila inicial para traducir')
+parser.add_argument('--end', type=int, default=100, help='Fila final para traducir (no inclusiva)')
+
 args=parser.parse_args()
 #(Aitzi  dixit, aquí complicad el prompt lo que necesitéis para evitar la verbosity)
 template = """Supose you are a professional translator. Translate into an informal English the following text. Do not include emojis or explanations. Just return the translated text.
@@ -35,6 +39,9 @@ comentarios=[]
 comentarios_columna=[]
 
 for n,fila in df.iterrows():
+    if n < args.start or n >= args.end:
+        continue #salta las filas que no están en el rango
+
     print("n: "+str(n))
     print(fila["_id"])
     reviews=fila["reviews"]
@@ -48,15 +55,20 @@ for n,fila in df.iterrows():
     comentarios_columna.append(comentarios)
     comentarios=[]
 
-nombre_salida_csv=os.path.splitext(nombre_csv)[0]+"_trad.csv" #nombre del csv en el q se van a guardar los comentarios traducidos
+df_traducido=df.iloc[args.start:args.end].copy()
+df_traducido["comments_traducidos"]=comentarios_columna
+
+nombre_salida_csv=f"{os.path.splitext(nombre_csv)[0]}_trad_{args.start}_{args.end-1}.csv" #nombre del csv en el q se van a guardar los comentarios traducidos
 
 #guardamos en csv
-df["comments_trad"]=comentarios_columna #añadimos la lista de comentarios final del df
-df.to_csv(nombre_salida_csv,index=False) #guardamos el csv que contiene todas las columnas + la columna de comentarios (de portugal y españa)
+df_traducido.to_csv(nombre_salida_csv,index=False)
+
+
+#df["comments_trad"]=comentarios_columna #añadimos la lista de comentarios final del df
+#df.to_csv(nombre_salida_csv,index=False) #guardamos el csv que contiene todas las columnas + la columna de comentarios (de portugal y españa)
 
 #df_comentarios_columna = pd.DataFrame({"comments_trad":comentarios_columna}) #esto es para guardar los comentarios traducidos en un csv
 #df_comentarios_columna.to_csv(nombre_salida_csv,index=False)
-
 
 """ans=chain.invoke({'text': comment, 'translation': ''}).strip() #remove newLine
 print("\n"+Fore.GREEN + "| " + args.model + " | " + dataset + "-" + args.lang + "-" + args.split + " | n: " + str(n + 1) + Fore.RESET)
