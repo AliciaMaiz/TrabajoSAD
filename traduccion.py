@@ -19,8 +19,8 @@ parser.add_argument('--lang', type=str, default='en', help='language')
 parser.add_argument('--split', type=str, default='train', help='split') #esto lo he cambiado (Aitzi dixit)
 parser.add_argument('--sample', type=int, default=-1, help='sample')
 
-parser.add_argument('--start', type=int, default=0, help='Fila inicial para traducir')
-parser.add_argument('--end', type=int, default=100, help='Fila final para traducir (no inclusiva)')
+parser.add_argument('--start', type=int, default=400, help='Fila inicial para traducir')
+parser.add_argument('--end', type=int, default=556, help='Fila final para traducir (no inclusiva)')
 
 args=parser.parse_args()
 #(Aitzi  dixit, aquí complicad el prompt lo que necesitéis para evitar la verbosity)
