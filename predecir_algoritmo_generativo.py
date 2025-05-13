@@ -28,8 +28,8 @@ prompt = PromptTemplate.from_template(template)
 model = OllamaLLM(model=args.model,temperature=0, num_predict=1) #deterministic (Aitzi dixit, esto también hay que modificarlo para que no se limite a devolver solo una palabra. temperature=0 es para que sea determinista y siempre de lo mismo)
 chain = prompt | model
 
-nombre_csv="portugal_spain_trad.csv" #csv a predecir (el csv tiene la columna:comments_trad)
-#en cada fila del csv (en comments_trad) hay una lista de comentarios traducidos que pertenecen a una propiedad de airbnb
+nombre_csv="portugal_trad.csv" #csv a predecir (el csv tiene la columna:comments_traducidos)
+#en cada fila del csv (en comments_traducidos) hay una lista de comentarios traducidos que pertenecen a una propiedad de airbnb
 
 
 #print(df.head())
@@ -39,7 +39,9 @@ scores_columna=[]
 scores_media_columna=[]
 
 for n,fila in df.iterrows(): #por cada fila (en la que hay cero o varios comentarios)
-    comments=fila["comments_trad"]
+    print("n: " + str(n))
+    print(fila["_id"])
+    comments=fila["comments_traducidos"]
     c = ast.literal_eval(comments)
     for comment in c: #recorremos la lista de comentarios
         #print(comment)
