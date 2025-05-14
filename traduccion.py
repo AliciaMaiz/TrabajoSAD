@@ -13,7 +13,7 @@ from langchain_core.prompts import PromptTemplate
 from langchain_ollama.llms import OllamaLLM
 import argparse
 
-parser=argparse.ArgumentParser(description='casiMedicos ollama LLM evaluation')
+parser=argparse.ArgumentParser(description='traduccion ollama LLM')
 parser.add_argument('--model', type=str, default='gemma2:2b', help='ollama model name')
 parser.add_argument('--lang', type=str, default='en', help='language')
 parser.add_argument('--split', type=str, default='train', help='split') #esto lo he cambiado (Aitzi dixit)
