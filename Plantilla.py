@@ -568,7 +568,6 @@ def kNN(x_traindev, y_traindev):
 
     #guardamos el modelo utilizando pickle
     save_model(gs,'kNN')
-    obtener_probabilidades()
 
 def decision_tree(x_traindev, y_traindev):
     """
@@ -592,7 +591,6 @@ def decision_tree(x_traindev, y_traindev):
 
     #guardamos el modelo utilizando pickle
     save_model(gs, 'decision_tree')
-    obtener_probabilidades()
 
 def random_forest(x_traindev, y_traindev):
     """
@@ -617,7 +615,6 @@ def random_forest(x_traindev, y_traindev):
 
     #guardamos el modelo utilizando pickle
     save_model(gs, 'random_forest')
-    obtener_probabilidades()
 
 def naive_bayes(x_traindev, y_traindev):
     gs = GridSearchCV(GaussianNB(), param_grid= args.naiveBayes, cv=5, n_jobs=args.cpu, scoring=args.evaluation, refit=args.best_model)
@@ -633,7 +630,6 @@ def naive_bayes(x_traindev, y_traindev):
 
     #guardamos el modelo utilizando pickle
     save_model(gs, 'naive_bayes')
-    obtener_probabilidades()
 
 def load_model():
     """
@@ -658,22 +654,57 @@ def load_model():
 def obtener_probabilidades():
 
     try:
-        loaded_knn_model = load_model()
-        print("Modelo k-NN cargado exitosamente.")
+        loaded_model = load_model()
+        print("Modelo cargado exitosamente.")
 
         print("\nCalculando probabilidades en el conjunto de test con el modelo cargado...")
-        probabilities_loaded = loaded_knn_model.predict_proba(x_traindev)
+        probabilities= loaded_model.predict_proba(x_traindev)
+        df_probabilities = pd.DataFrame(probabilities, columns=['Probabilidad_Clase_0', 'Probabilidad_Clase_1'])
+        if isinstance(x_traindev, list):
+            df_output = pd.DataFrame({'Comentario': x_traindev})
+            df_output = pd.concat([df_output, round(df_probabilities, 1)], axis=1)
+        elif isinstance(x_traindev, pd.DataFrame):
+            df_output = pd.concat([x_traindev, round(df_probabilities, 1)], axis=1)
+        else:
+            print(Fore.YELLOW + "Advertencia: La estructura de x_data no se reconoce para incluirla directamente en el CSV." + Fore.RESET)
+            df_output = df_probabilities
 
-        print("Clases del modelo cargado:", loaded_knn_model.classes_)
-        print("Forma del array de probabilidades:", probabilities_loaded.shape)
-        print("Probabilidades para las primeras 5 muestras de test (modelo cargado):")
-        print(probabilities_loaded[:5])
-
+        df_output.to_csv('output.csv', index=False)
+        print(f"Probabilidades guardadas en: {'output.csv'}")
+        print("Clases del modelo cargado:", loaded_model.classes_)
+        print("Forma del array de probabilidades:", probabilities.shape)
+        print("Probabilidades para las primeras 10 muestras de test (modelo cargado):")
+        print(probabilities[:10])
+        convertir_datos()
     except FileNotFoundError:
         print(
-            Fore.RED + "Error: No se encontró el archivo del modelo 'kNN_best_model.joblib'. Ejecuta la función kNN primero." + Fore.RESET)
+            Fore.RED + "Error: No se encontró el archivo del modelo . Ejecuta el algoritmo primero." + Fore.RESET)
     except Exception as e:
         print(Fore.RED + f"Error al cargar o usar el modelo: {e}" + Fore.RESET)
+
+def convertir_datos():
+
+    try:
+        df = pd.read_csv('output.csv')
+        if 'Probabilidad_Clase_1' in df.columns:
+            rating = df['Probabilidad_Clase_1']
+            for i in range(len(rating)):
+                if isinstance(x_traindev, list):
+                    df_output = pd.DataFrame({'Comentario': x_traindev})
+                    rating[i] = rating[i]*5
+                    df_output = pd.concat([df_output, rating], axis=1)
+                elif isinstance(x_traindev, pd.DataFrame):
+                    rating[i] = rating[i] * 5
+                    df_output = pd.concat([x_traindev, rating], axis=1)
+                else:
+                    print(
+                        Fore.YELLOW + "Advertencia: La estructura de x_data no se reconoce para incluirla directamente en el CSV." + Fore.RESET)
+            df_output.to_csv('escalado.csv', index=False)
+            print(f"Probabilidades guardadas en: {'output.csv'}")
+    except Exception as e:
+        print(Fore.RED + "Error al cargar el archivo" + Fore.RESET)
+        print(e)
+        sys.exit(1)
 
 def calcular_metricas(y_real, y_pred):
     resultados = {}
@@ -845,7 +876,7 @@ if __name__ == "__main__":
 
             dfmetricas=calcular_metricas(y_test, y_pred)
             dfmetricas.to_csv(f'output/test-metricas-{args.nombremodeloatestear}.csv', index=False)
-
+            obtener_probabilidades()
             sys.exit(0)
         except Exception as e:
             print(e)
