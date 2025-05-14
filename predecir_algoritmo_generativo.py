@@ -21,7 +21,7 @@ parser.add_argument('--split', type=str, default='train', help='split') #esto lo
 parser.add_argument('--sample', type=int, default=-1, help='sample')
 args=parser.parse_args()
 #(Aitzi  dixit, aquí complicad el prompt lo que necesitéis para evitar la verbosity)
-template = """You are an expert Airbnb review evaluator. Your task is to estimate the user's satisfaction score from 0.0 (very bad) to 9.0 (excellent) based on this comment. Do not give any explanation, just give the number.
+template = """You are an expert Airbnb review evaluator. Your task is to estimate the user's satisfaction score from 0.0 (very bad) to 9.0 (excellent) based on the comment below. Do not give any explanation or ask anything, just give the number.
 Comment: {comment}
 Score: {score}"""
 prompt = PromptTemplate.from_template(template)
