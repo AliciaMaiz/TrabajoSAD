@@ -706,6 +706,7 @@ def convertir_datos():
         df_output.to_csv('escalado.csv', index=False)
         print(f"Probabilidades guardadas en: {'escalado.csv'}")
     except Exception as e:
+
         print(Fore.RED + "Error al cargar el archivo" + Fore.RESET)
         print(e)
         sys.exit(1)
