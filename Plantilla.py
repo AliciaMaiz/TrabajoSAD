@@ -686,21 +686,25 @@ def convertir_datos():
 
     try:
         df = pd.read_csv('output.csv')
-        if 'Probabilidad_Clase_1' in df.columns:
+        if 'Probabilidad_Clase_5' in df.columns:
+            columna = ['Probabilidad_Clase_1', 'Probabilidad_Clase_2', 'Probabilidad_Clase_3', 'Probabilidad_Clase_4', 'Probabilidad_Clase_5']
+            rating = df[columna].idxmax(axis=1)
+
+        else:
             rating = df['Probabilidad_Clase_1']
-            for i in range(len(rating)):
-                if isinstance(x_traindev, list):
-                    df_output = pd.DataFrame({'Comentario': x_traindev})
-                    rating[i] = rating[i]*5
-                    df_output = pd.concat([df_output, rating], axis=1)
-                elif isinstance(x_traindev, pd.DataFrame):
-                    rating[i] = rating[i] * 5
-                    df_output = pd.concat([x_traindev, rating], axis=1)
-                else:
-                    print(
-                        Fore.YELLOW + "Advertencia: La estructura de x_data no se reconoce para incluirla directamente en el CSV." + Fore.RESET)
-            df_output.to_csv('escalado.csv', index=False)
-            print(f"Probabilidades guardadas en: {'output.csv'}")
+        for i in range(len(rating)):
+            if isinstance(x_traindev, list):
+                df_output = pd.DataFrame({'Comentario': x_traindev})
+                rating[i] = rating[i] * 9
+                df_output = pd.concat([df_output, rating], axis=1)
+            elif isinstance(x_traindev, pd.DataFrame):
+                rating[i] = rating[i] * 9
+                df_output = pd.concat([x_traindev, rating], axis=1)
+            else:
+                print(
+                    Fore.YELLOW + "Advertencia: La estructura de x_traindev no se reconoce para incluirla directamente en el CSV." + Fore.RESET)
+        df_output.to_csv('escalado.csv', index=False)
+        print(f"Probabilidades guardadas en: {'escalado.csv'}")
     except Exception as e:
         print(Fore.RED + "Error al cargar el archivo" + Fore.RESET)
         print(e)
