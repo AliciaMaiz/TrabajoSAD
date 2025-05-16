@@ -52,7 +52,7 @@ for n,fila in df.iterrows(): #por cada fila (en la que hay cero o varios comenta
     scores_columna.append(scores_fila) #añadimos la lista de scores de una fila a la lista de scrores que representan la columna de scores (esto es, una lista dentro de otra lista)
     if len(scores_fila)>0:
         media=sum(scores_fila)/len(scores_fila) #sacamos la media
-        media=round(media)
+        #media=round(media)
     else:
         media=None
     scores_media_columna.append(media) #añadimos la media a la lista
