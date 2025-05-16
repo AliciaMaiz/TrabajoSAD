@@ -25,7 +25,7 @@ for n,fila in df.iterrows():
     scores_media_reales.append(scores_media_real)
     error=None
     if scores_media_real: #si no es None
-        scores_media_real=scores_media_real*9/100 #convertimos la media real de 0 a 100 a de 0 a 9
+        scores_media_real=scores_media_real*9/10 #convertimos la media real de 0 a 100 a de 0 a 9
         scores_media_pred=fila["scores_media_pred"] #obtenemos la media de scores predicha
         error=(scores_media_pred-scores_media_real)**2 #calculamos el error -> error=(media_predicha-media_real)^2
     errores.append(error)
