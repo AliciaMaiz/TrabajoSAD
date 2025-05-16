@@ -10,7 +10,7 @@ import ast
 import os
 import pandas as pd
 
-nombre_csv="portugal_trad10_scoresone.csv"
+nombre_csv="portugal_spain_trad_scores.csv"
 df=pd.read_csv(nombre_csv)
 
 scores_media_reales=[]
