@@ -21,7 +21,7 @@ for n,fila in df.iterrows():
     print(fila["_id"])
     review_scores=fila["review_scores"]
     review_scores=ast.literal_eval(review_scores) #convertimos el string a diccionario
-    scores_media_real=review_scores.get("review_scores_rating") #obtenemos la media de scores real
+    scores_media_real=review_scores.get("review_scores_value") #obtenemos la media de scores real
     scores_media_reales.append(scores_media_real)
     error=None
     if scores_media_real: #si no es None
