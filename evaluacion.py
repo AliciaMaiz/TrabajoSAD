@@ -41,6 +41,6 @@ df_evaluacion["scores_media_pred"]=df["scores_media_pred"]
 df_evaluacion["error"]=errores
 
 #guardamos los resultados de la evaluacion en un csv
-df_evaluacion.to_csv("evaluacion"+os.path.splitext(nombre_csv)[0]+".csv",index=False)
+df_evaluacion.to_csv("evaluacion_"+os.path.splitext(nombre_csv)[0]+".csv",index=False)
 
-print("El csv evaluacion"+os.path.splitext(nombre_csv)[0]+".csv se ha guardado correctamente.")
+print("El csv evaluacion_"+os.path.splitext(nombre_csv)[0]+".csv se ha guardado correctamente.")
