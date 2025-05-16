@@ -1,4 +1,4 @@
-"""Con un csv con todas las columnas (o mínimo con estas: _id, review_scores, reviews, scores_media_pred),
+"""Con un csv con todas las columnas (o mínimo con estas: _id, review_scores, scores_media_pred),
 este programa evalúa las predicciones realizadas por el modelo, calcula el error por cada propiedad,
 y calcula la media de los errores, para determinar si el modelo ha hecho buenas predicciones.
 Output: evaluacion_portugal_spain_trad_scores.csv (con las columnas _id, scores_media_real,
