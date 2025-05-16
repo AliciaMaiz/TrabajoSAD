@@ -22,12 +22,13 @@ for n,fila in df.iterrows():
     review_scores=fila["review_scores"]
     review_scores=ast.literal_eval(review_scores) #convertimos el string a diccionario
     scores_media_real=review_scores.get("review_scores_value") #obtenemos la media de scores real
-    scores_media_reales.append(scores_media_real)
     error=None
     if scores_media_real: #si no es None
-        scores_media_real=scores_media_real*9/100 #convertimos la media real de 0 a 100 a de 0 a 9
+        scores_media_real=scores_media_real*9/10 #convertimos la media real de 0 a 10 a de 0 a 9
+        #scores_media_real=round(scores_media_real) #lo redondeamos
         scores_media_pred=fila["scores_media_pred"] #obtenemos la media de scores predicha
         error=(scores_media_pred-scores_media_real)**2 #calculamos el error -> error=(media_predicha-media_real)^2
+    scores_media_reales.append(scores_media_real)
     errores.append(error)
 
 errores_validos=[e for e in errores if e is not None]
