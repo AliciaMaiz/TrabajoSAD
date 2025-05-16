@@ -57,10 +57,12 @@ for n,fila in df.iterrows(): #por cada fila (en la que hay cero o varios comenta
     scores_media_columna.append(media) #añadimos la media a la lista
     scores_fila=[] #vaciamos la lista para la siguiente iteración
 
-df["scores"]=scores_columna #añadimos la lista de scrores final al df con los comentarios
-df["scores_media"]=scores_media_columna #añadimos la media de los scores
+df["scores_pred"]=scores_columna #añadimos la lista de scrores final al df con los comentarios
+df["scores_media_pred"]=scores_media_columna #añadimos la media de los scores
 
 nombre_salida_csv=os.path.splitext(nombre_csv)[0]+"_scores.csv" #nombre del csv en el q se van a guardar los comentarios traducidos con scores
 
 #guardamos en csv
 df.to_csv(nombre_salida_csv,index=False)
+
+print("El csv "+os.path.splitext(nombre_csv)[0]+"_scores.csv se ha guardado correctamente.")
