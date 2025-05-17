@@ -659,7 +659,11 @@ def obtener_probabilidades():
 
         print("\nCalculando probabilidades en el conjunto de test con el modelo cargado...")
         probabilities= loaded_model.predict_proba(x_traindev)
-        df_probabilities = pd.DataFrame(probabilities, columns=['Probabilidad_Clase_0', 'Probabilidad_Clase_1'])
+        if args.prediccton == "Rating":
+            df_probabilities = pd.DataFrame(probabilities, columns=['Probabilidad_Clase_0', 'Probabilidad_Clase_1', 'Probabilidad_Clase_2', 'Probabilidad_Clase_3',
+                                                                    'Probabilidad_Clase_4', 'Probabilidad_Clase_5'])
+        else:
+            df_probabilities = pd.DataFrame(probabilities, columns=['Probabilidad_Clase_0', 'Probabilidad_Clase_1'])
         if isinstance(x_traindev, list):
             df_output = pd.DataFrame({'Comentario': x_traindev})
             df_output = pd.concat([df_output, round(df_probabilities, 1)], axis=1)
@@ -688,21 +692,28 @@ def convertir_datos():
         df = pd.read_csv('output.csv')
         if 'Probabilidad_Clase_5' in df.columns:
             columna = ['Probabilidad_Clase_1', 'Probabilidad_Clase_2', 'Probabilidad_Clase_3', 'Probabilidad_Clase_4', 'Probabilidad_Clase_5']
-            rating = df[columna].idxmax(axis=1)
-
+            rating = df[columna]
+            for i in range(len(rating)):
+                if isinstance(x_traindev, list):
+                    df_output = pd.DataFrame({'Comentario': x_traindev})
+                    rating[i] = ((rating['Probabilidad_Clase_1'][i] + rating['Probabilidad_Clase_2'][i] + rating['Probabilidad_Clase_3'][i]
+                                 + rating['Probabilidad_Clase_4'][i] + rating['Probabilidad_Clase_5'][i])* 9) / 5
+                    df_output = pd.concat([df_output, rating], axis=1)
+                elif isinstance(x_traindev, pd.DataFrame):
+                    rating[i] = ((rating['Probabilidad_Clase_1'][i] + rating['Probabilidad_Clase_2'][i] + rating['Probabilidad_Clase_3'][i]
+                                 + rating['Probabilidad_Clase_4'][i] + rating['Probabilidad_Clase_5'][i])* 9) / 5
+                    df_output = pd.concat([x_traindev, rating], axis=1)
+                else:
+                    print(
+                        Fore.YELLOW + "Advertencia: La estructura de x_traindev no se reconoce para incluirla directamente en el CSV." + Fore.RESET)
         else:
-            rating = df['Probabilidad_Clase_1']
-        for i in range(len(rating)):
-            if isinstance(x_traindev, list):
-                df_output = pd.DataFrame({'Comentario': x_traindev})
-                rating[i] = rating[i] * 9
-                df_output = pd.concat([df_output, rating], axis=1)
-            elif isinstance(x_traindev, pd.DataFrame):
-                rating[i] = rating[i] * 9
-                df_output = pd.concat([x_traindev, rating], axis=1)
-            else:
-                print(
-                    Fore.YELLOW + "Advertencia: La estructura de x_traindev no se reconoce para incluirla directamente en el CSV." + Fore.RESET)
+
+            rating = df['Probabilidad_Clase_1'] * 9
+            print(rating)
+            print(len(rating))
+            print(len(x_traindev))
+            df_output = pd.concat([round(rating.rename('Probabilidad'),1)], axis=1)
+
         df_output.to_csv('escalado.csv', index=False)
         print(f"Probabilidades guardadas en: {'escalado.csv'}")
     except Exception as e:
