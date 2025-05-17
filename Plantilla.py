@@ -659,7 +659,7 @@ def obtener_probabilidades():
 
         print("\nCalculando probabilidades en el conjunto de test con el modelo cargado...")
         probabilities= loaded_model.predict_proba(x_traindev)
-        if args.prediccton == "Rating":
+        if args.prediction == "Rating":
             df_probabilities = pd.DataFrame(probabilities, columns=['Probabilidad_Clase_0', 'Probabilidad_Clase_1', 'Probabilidad_Clase_2', 'Probabilidad_Clase_3',
                                                                     'Probabilidad_Clase_4', 'Probabilidad_Clase_5'])
         else:
