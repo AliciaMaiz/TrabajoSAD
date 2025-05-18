@@ -32,7 +32,7 @@ scores_columna=[]
 scores_media_columna=[]
 
 for n,fila in df.iterrows(): #por cada fila (en la que hay cero o varios comentarios)
-    if n>4:
+    if n>4: #para probar, hacemos solo las primeras 4 filas
         break
     print("n: " + str(n))
     print(fila["_id"])
