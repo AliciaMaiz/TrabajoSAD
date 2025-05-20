@@ -311,7 +311,7 @@ def process_text(text_feature):
     try:
         if text_feature.columns.size > 0:
             if "tf-idf" in args.preprocessing["text_processing"]["method"]:
-                tfidf_vectorizer = TfidfVectorizer()
+                tfidf_vectorizer = TfidfVectorizer(max_features=10000)
                 text_data = data[text_feature.columns].apply(lambda x: ' '.join(x.astype(str)), axis=1)
                 tfidf_matrix = tfidf_vectorizer.fit_transform(text_data)
                 #print(tfidf_vectorizer.get_feature_names_out())
@@ -660,18 +660,12 @@ def obtener_probabilidades():
         print("\nCalculando probabilidades en el conjunto de test con el modelo cargado...")
         probabilities= loaded_model.predict_proba(x_traindev)
         if args.prediction == "Rating":
-            df_probabilities = pd.DataFrame(probabilities, columns=['Probabilidad_Clase_0', 'Probabilidad_Clase_1', 'Probabilidad_Clase_2', 'Probabilidad_Clase_3',
+            df_probabilities = pd.DataFrame(probabilities, columns=['Probabilidad_Clase_1', 'Probabilidad_Clase_2', 'Probabilidad_Clase_3',
                                                                     'Probabilidad_Clase_4', 'Probabilidad_Clase_5'])
         else:
             df_probabilities = pd.DataFrame(probabilities, columns=['Probabilidad_Clase_0', 'Probabilidad_Clase_1'])
-        if isinstance(x_traindev, list):
-            df_output = pd.DataFrame({'Comentario': x_traindev})
-            df_output = pd.concat([df_output, round(df_probabilities, 1)], axis=1)
-        elif isinstance(x_traindev, pd.DataFrame):
-            df_output = pd.concat([x_traindev, round(df_probabilities, 1)], axis=1)
-        else:
-            print(Fore.YELLOW + "Advertencia: La estructura de x_data no se reconoce para incluirla directamente en el CSV." + Fore.RESET)
-            df_output = df_probabilities
+
+        df_output = pd.concat([ round(df_probabilities, 1)], axis=1)
 
         df_output.to_csv('output.csv', index=False)
         print(f"Probabilidades guardadas en: {'output.csv'}")
@@ -693,26 +687,18 @@ def convertir_datos():
         if 'Probabilidad_Clase_5' in df.columns:
             columna = ['Probabilidad_Clase_1', 'Probabilidad_Clase_2', 'Probabilidad_Clase_3', 'Probabilidad_Clase_4', 'Probabilidad_Clase_5']
             rating = df[columna]
-            for i in range(len(rating)):
-                if isinstance(x_traindev, list):
-                    df_output = pd.DataFrame({'Comentario': x_traindev})
-                    rating[i] = ((rating['Probabilidad_Clase_1'][i] + rating['Probabilidad_Clase_2'][i] + rating['Probabilidad_Clase_3'][i]
-                                 + rating['Probabilidad_Clase_4'][i] + rating['Probabilidad_Clase_5'][i])* 9) / 5
-                    df_output = pd.concat([df_output, rating], axis=1)
-                elif isinstance(x_traindev, pd.DataFrame):
-                    rating[i] = ((rating['Probabilidad_Clase_1'][i] + rating['Probabilidad_Clase_2'][i] + rating['Probabilidad_Clase_3'][i]
-                                 + rating['Probabilidad_Clase_4'][i] + rating['Probabilidad_Clase_5'][i])* 9) / 5
-                    df_output = pd.concat([x_traindev, rating], axis=1)
-                else:
-                    print(
-                        Fore.YELLOW + "Advertencia: La estructura de x_traindev no se reconoce para incluirla directamente en el CSV." + Fore.RESET)
+
+            rating = ((rating['Probabilidad_Clase_1'] + rating['Probabilidad_Clase_2'] + rating['Probabilidad_Clase_3']
+                 + rating['Probabilidad_Clase_4'] + rating['Probabilidad_Clase_5'])* 9) / 5
+
         else:
 
             rating = df['Probabilidad_Clase_1'] * 9
             print(rating)
             print(len(rating))
             print(len(x_traindev))
-            df_output = pd.concat([round(rating.rename('Probabilidad'),1)], axis=1)
+
+        df_output = pd.concat([round(rating.rename('Probabilidad'),1)], axis=1)
 
         df_output.to_csv('escalado.csv', index=False)
         print(f"Probabilidades guardadas en: {'escalado.csv'}")
