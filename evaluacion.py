@@ -17,8 +17,8 @@ scores_media_reales=[]
 errores=[]
 
 for n,fila in df.iterrows():
-    print("n: "+str(n))
-    print(fila["_id"])
+    #print("n: "+str(n))
+    #print(fila["_id"])
     review_scores=fila["review_scores"]
     review_scores=ast.literal_eval(review_scores) #convertimos el string a diccionario
     scores_media_real=review_scores.get("review_scores_value") #obtenemos la media de scores real
@@ -31,7 +31,8 @@ for n,fila in df.iterrows():
     scores_media_reales.append(scores_media_real)
     errores.append(error)
 
-errores_validos=[e for e in errores if e is not None]
+errores_validos=[e for e in errores if pd.notna(e)]
+
 mse=sum(errores_validos)/len(errores_validos) #calculamos el error medio sin tener en cuenta los vacíos (mse=mean squared error)
 print("MSE (error cuadrático medio): "+str(mse))
 
