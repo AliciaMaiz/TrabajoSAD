@@ -25,10 +25,16 @@ def unir_spain_trad():
     df_spain_trad = pd.concat([df_s_0_99,df_s_100_199,df_s_200_299,df_s_300_399,df_s_400_499,df_s_500_633], ignore_index=True)
     df_spain_trad.to_csv("spain_trad.csv", index=False)
 
+def unir_portugal_spain_trad_scores():
+    df_p = pd.read_csv("portugal_trad_scores.csv")
+    df_s = pd.read_csv("spain_trad_scores.csv")
 
+    df_p_s = pd.concat([df_p,df_s], ignore_index=True)
+    df_p_s.to_csv("portugal_spain_trad_scores.csv", index=False)
 
 #función a ejecutar:
 #unir_portugal_trad()
 #unir_spain_trad()
+#unir_portugal_spain_trad_scores()
 
 
