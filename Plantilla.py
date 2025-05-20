@@ -311,7 +311,7 @@ def process_text(text_feature):
     try:
         if text_feature.columns.size > 0:
             if "tf-idf" in args.preprocessing["text_processing"]["method"]:
-                tfidf_vectorizer = TfidfVectorizer(max_features=10000)
+                tfidf_vectorizer = TfidfVectorizer()
                 text_data = data[text_feature.columns].apply(lambda x: ' '.join(x.astype(str)), axis=1)
                 tfidf_matrix = tfidf_vectorizer.fit_transform(text_data)
                 #print(tfidf_vectorizer.get_feature_names_out())
@@ -662,9 +662,12 @@ def obtener_probabilidades():
         if args.prediction == "Rating":
             df_probabilities = pd.DataFrame(probabilities, columns=['Probabilidad_Clase_1', 'Probabilidad_Clase_2', 'Probabilidad_Clase_3',
                                                                     'Probabilidad_Clase_4', 'Probabilidad_Clase_5'])
-        else:
+        elif args.prediction == "Positive or Negative":
             df_probabilities = pd.DataFrame(probabilities, columns=['Probabilidad_Clase_0', 'Probabilidad_Clase_1'])
-
+        else:
+            df_probabilities = pd.DataFrame(probabilities, columns=['Probabilidad_Clase_0','Probabilidad_Clase_1', 'Probabilidad_Clase_2', 'Probabilidad_Clase_3',
+                                                                    'Probabilidad_Clase_4', 'Probabilidad_Clase_5', 'Probabilidad_Clase_6', 'Probabilidad_Clase_7'
+                                                                    , 'Probabilidad_Clase_8', 'Probabilidad_Clase_9'])
         df_output = pd.concat([ round(df_probabilities, 1)], axis=1)
 
         df_output.to_csv('output.csv', index=False)
@@ -688,16 +691,23 @@ def convertir_datos():
             columna = ['Probabilidad_Clase_1', 'Probabilidad_Clase_2', 'Probabilidad_Clase_3', 'Probabilidad_Clase_4', 'Probabilidad_Clase_5']
             rating = df[columna]
 
-            rating = ((rating['Probabilidad_Clase_1'] + rating['Probabilidad_Clase_2'] + rating['Probabilidad_Clase_3']
-                 + rating['Probabilidad_Clase_4'] + rating['Probabilidad_Clase_5'])* 9) / 5
+            rating = ((rating['Probabilidad_Clase_1'] + 2*rating['Probabilidad_Clase_2'] + 3*rating['Probabilidad_Clase_3']
+                 + 4*rating['Probabilidad_Clase_4'] + 5*rating['Probabilidad_Clase_5'])* 9 / 5)
 
-        else:
+        elif 'Probabilidad_Clase_1' in df.columns:
 
             rating = df['Probabilidad_Clase_1'] * 9
             print(rating)
             print(len(rating))
             print(len(x_traindev))
+        else:
+            columna = ['Probabilidad_Clase_1', 'Probabilidad_Clase_2', 'Probabilidad_Clase_3', 'Probabilidad_Clase_4', 'Probabilidad_Clase_5'
+                , 'Probabilidad_Clase_6', 'Probabilidad_Clase_7', 'Probabilidad_Clase_8', 'Probabilidad_Clase_9']
+            rating = df[columna]
 
+            rating = ((rating['Probabilidad_Clase_1'] + 2*rating['Probabilidad_Clase_2'] + 3*rating['Probabilidad_Clase_3']
+                 + 4*rating['Probabilidad_Clase_4'] + 5*rating['Probabilidad_Clase_5'] + 6*rating['Probabilidad_Clase_6'] + 7*rating['Probabilidad_Clase_7']
+                       + 8*rating['Probabilidad_Clase_8'] + 9*rating['Probabilidad_Clase_9']) / 9 )
         df_output = pd.concat([round(rating.rename('Probabilidad'),1)], axis=1)
 
         df_output.to_csv('escalado.csv', index=False)
