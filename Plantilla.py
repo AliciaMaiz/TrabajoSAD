@@ -43,6 +43,38 @@ from tqdm import tqdm
 # Funciones auxiliares
 # dev para evaluar sobre él. probamos con distintos hiperparámetros sobre dev. al final del tod. se prueba con el test para ver si algún algoritmo ha hecho overfitting
 # semilla: para que el random sea "igual", importante para el ML, en la reproducibidad
+
+def predecirScores(df_comentarios, nombre_json, nombre_modelo):
+    global data
+    global args
+    global x_traindev
+    data=df_comentarios
+    args = argparse.Namespace(prediction="",nombremodeloatestear=nombre_modelo,debug=False)
+
+    # Leemos los parametros del JSON
+    with open(nombre_json) as json_file:
+        preprocessing = json.load(json_file)
+    # Juntamos tod. en una variable
+    for key, value in preprocessing.items():
+        setattr(args, key, value)
+
+    preprocesar_datos()
+    x_traindev=data
+    #model=load_model()
+    if data.empty:
+        prediccion=[]
+    else:
+        #prediccion=model.predict(data)
+        obtener_probabilidades()
+        df=pd.read_csv('escalado.csv')
+        prediccion=df["Probabilidad_Clase_1"].tolist()
+
+    #print("prediccion:")
+    #print(prediccion)
+
+    return prediccion
+
+
 def signal_handler(sig, frame):
     """
     Función para manejar la señal SIGINT (Ctrl+C)
@@ -313,7 +345,14 @@ def process_text(text_feature):
             if "tf-idf" in args.preprocessing["text_processing"]["method"]:
                 tfidf_vectorizer = TfidfVectorizer()
                 text_data = data[text_feature.columns].apply(lambda x: ' '.join(x.astype(str)), axis=1)
-                tfidf_matrix = tfidf_vectorizer.fit_transform(text_data)
+                if args.prediction!="": #if aux para predecirScores
+                    tfidf_matrix = tfidf_vectorizer.fit_transform(text_data)
+                    with open(f'output/vectorizer_tf-idf.pkl', 'wb') as file:
+                        pickle.dump(tfidf_vectorizer, file)  # guardamos el vectorizer
+                else: #si es para predecir sólo, cargamos el vectorizador guardado en el entrenamiento
+                    with open(f'output/vectorizer_tf-idf.pkl', 'rb') as file:
+                        tfidf_vectorizer=pickle.load(file)
+                    tfidf_matrix = tfidf_vectorizer.transform(text_data)
                 #print(tfidf_vectorizer.get_feature_names_out())
                 text_features_df = pd.DataFrame(tfidf_matrix.toarray(),
                                                 columns=tfidf_vectorizer.get_feature_names_out())
@@ -322,11 +361,18 @@ def process_text(text_feature):
                 print(Fore.LIGHTMAGENTA_EX + "Texto tratado con éxito usando TF-IDF" + Fore.RESET)
 
             elif "bow" in  args.preprocessing["text_processing"]["method"]:
-                bow_vecotirizer = CountVectorizer()
+                bow_vectorizer = CountVectorizer()
                 text_data = data[text_feature.columns].apply(lambda x: ' '.join(x.astype(str)), axis=1)
-                bow_matrix = bow_vecotirizer.fit_transform(text_data)
-                #print(bow_vecotirizer.get_feature_names_out())
-                text_features_df = pd.DataFrame(bow_matrix.toarray(), columns=bow_vecotirizer.get_feature_names_out())
+                if args.prediction!="":
+                    bow_matrix = bow_vectorizer.fit_transform(text_data)
+                    with open(f'output/vectorizer_bow.pkl', 'wb') as file:
+                        pickle.dump(bow_vectorizer, file)  # guardamos el vectorizer
+                else: #si es para predecir sólo, cargamos el vectorizador guardado en el entrenamiento
+                    with open(f'output/vectorizer_bow.pkl', 'rb') as file:
+                        bow_vectorizer=pickle.load(file)
+                    bow_vectorizer.transform(text_data)
+                #print(bow_vectorizer.get_feature_names_out())
+                text_features_df = pd.DataFrame(bow_matrix.toarray(), columns=bow_vectorizer.get_feature_names_out())
                 data = pd.concat([data, text_features_df], axis=1)
                 data.drop(text_feature.columns, axis=1, inplace=True)
                 print(Fore.LIGHTMAGENTA_EX + "Texto tratado con éxito usando BOW" + Fore.RESET)
@@ -470,8 +516,10 @@ def preprocesar_datos():
     if "drop_features" in args.preprocessing:
         drop_features()
     #por alguna razón sin estas líneas de abajo no se reflejan los cambios y encima se duplican las cosas sin más eh
-
-    return pd.concat([numerical_feature, text_feature, categorical_feature, data[args.prediction]], axis=1)
+    if args.prediction!="":
+        return pd.concat([numerical_feature, text_feature, categorical_feature, data[args.prediction]], axis=1)
+    else:
+        return pd.concat([numerical_feature, text_feature, categorical_feature], axis=1)
 
 # Funciones para entrenar un modelo
 

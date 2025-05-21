@@ -1,5 +1,6 @@
 {
   "preprocessing": {
+    "drop_features": "Genre",
     "unique_category_threshold": 6,
     "missing_values": "drop",
     "text_processing": {
