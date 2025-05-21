@@ -23,6 +23,9 @@ for n,fila in df.iterrows(): #por cada fila (en la que hay cero o varios comenta
     comments=fila["comments_traducidos"]
     c = ast.literal_eval(comments) #en c hay una lista de comentarios
     df_c = pd.DataFrame(c) #en df_c hay un dataframe con los comentarios (un comentario en cada fila)
+    if not df_c.empty and 0 in df_c.columns:
+        df_c = df_c[~df_c[0].str.contains("This is an automatic message", na=False)] #si es un comentario automático, lo ignoramos porque
+        df_c = df_c.reset_index(drop=True)                                           #no lo ha escrito un usuario, no expresa satisfacción o insatisfacción
     scores_fila=Plantilla.predecirScores(df_c, "comentarios.json", nombre_modelo)
     #print(scores_fila)
     scores_columna.append(scores_fila) #añadimos la lista de scores de una fila a la lista de scrores que representan la columna de scores (esto es, una lista dentro de otra lista)

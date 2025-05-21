@@ -44,7 +44,7 @@ for n,fila in df.iterrows(): #por cada fila (en la que hay cero o varios comenta
     comments=fila["comments_traducidos"]
     c = ast.literal_eval(comments)
     for comment in c: #recorremos la lista de comentarios
-        if "This is an automatic message" in comment: #si es un comentario automático, lo igniramos porque no lo ha escrito un usuario,
+        if "This is an automatic message" in comment: #si es un comentario automático, lo ignoramos porque no lo ha escrito un usuario,
             continue                                  #no expresa satisfacción o insatisfacción
         ans = chain.invoke({'comment': comment, 'score': ''}).strip()  #predecimos el score de un comentario
         ans=float(ans) #pasamos el número en string que nos ha devuelto el algoritmo a int
