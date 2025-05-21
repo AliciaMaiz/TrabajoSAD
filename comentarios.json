@@ -1,0 +1,15 @@
+{
+  "preprocessing": {
+    "unique_category_threshold": 0,
+    "text_processing": {
+      "method": ["tf-idf"],
+      "lowercase": true,
+      "remove_punctuation": true,
+      "stopwords": true,
+      "stemmer": false,
+      "lemmatization": true,
+      "tokenization": true,
+      "sort": true
+    }
+  }
+}
