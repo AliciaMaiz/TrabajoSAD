@@ -28,7 +28,7 @@ prompt = PromptTemplate.from_template(template)
 model = OllamaLLM(model=args.model,temperature=0, num_predict=1) #deterministic (Aitzi dixit, esto también hay que modificarlo para que no se limite a devolver solo una palabra. temperature=0 es para que sea determinista y siempre de lo mismo)
 chain = prompt | model
 
-nombre_csv="spain_trad.csv" #csv a predecir (el csv tiene la columna:comments_traducidos)
+nombre_csv="portugal_spain_trad.csv" #csv a predecir (el csv tiene la columna:comments_traducidos)
 #en cada fila del csv (en comments_traducidos) hay una lista de comentarios traducidos que pertenecen a una propiedad de airbnb
 
 
@@ -44,7 +44,8 @@ for n,fila in df.iterrows(): #por cada fila (en la que hay cero o varios comenta
     comments=fila["comments_traducidos"]
     c = ast.literal_eval(comments)
     for comment in c: #recorremos la lista de comentarios
-        #print(comment)
+        if "This is an automatic message" in comment: #si es un comentario automático, lo igniramos porque no lo ha escrito un usuario,
+            continue                                  #no expresa satisfacción o insatisfacción
         ans = chain.invoke({'comment': comment, 'score': ''}).strip()  #predecimos el score de un comentario
         ans=float(ans) #pasamos el número en string que nos ha devuelto el algoritmo a int
         scores_fila.append(ans) #añadimos el score predecido a la lista de scores de una fila
@@ -52,7 +53,6 @@ for n,fila in df.iterrows(): #por cada fila (en la que hay cero o varios comenta
     scores_columna.append(scores_fila) #añadimos la lista de scores de una fila a la lista de scrores que representan la columna de scores (esto es, una lista dentro de otra lista)
     if len(scores_fila)>0:
         media=sum(scores_fila)/len(scores_fila) #sacamos la media
-        #media=round(media)
     else:
         media=None
     scores_media_columna.append(media) #añadimos la media a la lista
@@ -61,9 +61,10 @@ for n,fila in df.iterrows(): #por cada fila (en la que hay cero o varios comenta
 df["scores_pred"]=scores_columna #añadimos la lista de scrores final al df con los comentarios
 df["scores_media_pred"]=scores_media_columna #añadimos la media de los scores
 
-nombre_salida_csv=os.path.splitext(nombre_csv)[0]+"_scores.csv" #nombre del csv en el q se van a guardar los comentarios traducidos con scores
+nombre_salida_csv="g_"+os.path.splitext(nombre_csv)[0]+"_scores.csv" #nombre del csv en el q se van a guardar los comentarios traducidos con scores
 
 #guardamos en csv
 df.to_csv(nombre_salida_csv,index=False)
 
-print("El csv "+os.path.splitext(nombre_csv)[0]+"_scores.csv se ha guardado correctamente.")
+print("El csv g_"+os.path.splitext(nombre_csv)[0]+"_scores.csv se ha guardado correctamente.")
+#g_ para indicar que se han predicho los scores con un algoritmo generativo (ollama/gemma2b)
