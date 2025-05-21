@@ -45,6 +45,7 @@ from tqdm import tqdm
 # semilla: para que el random sea "igual", importante para el ML, en la reproducibidad
 
 def predecirScores(df_comentarios, nombre_json, nombre_modelo):
+    """métod. llamado desde predecir_tradicional para que teniendo una columna de comentarios, prediga la puntuación"""
     global data
     global args
     global x_traindev
@@ -60,17 +61,12 @@ def predecirScores(df_comentarios, nombre_json, nombre_modelo):
 
     preprocesar_datos()
     x_traindev=data
-    #model=load_model()
     if data.empty:
         prediccion=[]
     else:
-        #prediccion=model.predict(data)
         obtener_probabilidades()
         df=pd.read_csv('escalado.csv')
-        prediccion=df["Probabilidad_Clase_1"].tolist()
-
-    #print("prediccion:")
-    #print(prediccion)
+        prediccion=df["Probabilidad"].tolist()
 
     return prediccion
 
@@ -707,15 +703,7 @@ def obtener_probabilidades():
 
         print("\nCalculando probabilidades en el conjunto de test con el modelo cargado...")
         probabilities= loaded_model.predict_proba(x_traindev)
-        if args.prediction == "Rating":
-            df_probabilities = pd.DataFrame(probabilities, columns=['Probabilidad_Clase_1', 'Probabilidad_Clase_2', 'Probabilidad_Clase_3',
-                                                                    'Probabilidad_Clase_4', 'Probabilidad_Clase_5'])
-        elif args.prediction == "Positive or Negative":
-            df_probabilities = pd.DataFrame(probabilities, columns=['Probabilidad_Clase_0', 'Probabilidad_Clase_1'])
-        else:
-            df_probabilities = pd.DataFrame(probabilities, columns=['Probabilidad_Clase_0','Probabilidad_Clase_1', 'Probabilidad_Clase_2', 'Probabilidad_Clase_3',
-                                                                    'Probabilidad_Clase_4', 'Probabilidad_Clase_5', 'Probabilidad_Clase_6', 'Probabilidad_Clase_7'
-                                                                    , 'Probabilidad_Clase_8', 'Probabilidad_Clase_9'])
+        df_probabilities=pd.DataFrame(probabilities, columns=[f'Probabilidad_Clase_{cls}' for cls in loaded_model.classes_])
         df_output = pd.concat([ round(df_probabilities, 1)], axis=1)
 
         df_output.to_csv('output.csv', index=False)
