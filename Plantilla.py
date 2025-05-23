@@ -339,7 +339,10 @@ def process_text(text_feature):
     try:
         if text_feature.columns.size > 0:
             if "tf-idf" in args.preprocessing["text_processing"]["method"]:
-                tfidf_vectorizer = TfidfVectorizer()
+                if args.prediction=='Rating':
+                    tfidf_vectorizer = TfidfVectorizer(min_df=0.001)
+                else:
+                    tfidf_vectorizer = TfidfVectorizer()
                 text_data = data[text_feature.columns].apply(lambda x: ' '.join(x.astype(str)), axis=1)
                 if args.prediction!="": #if aux para predecirScores
                     tfidf_matrix = tfidf_vectorizer.fit_transform(text_data)
@@ -357,7 +360,10 @@ def process_text(text_feature):
                 print(Fore.LIGHTMAGENTA_EX + "Texto tratado con éxito usando TF-IDF" + Fore.RESET)
 
             elif "bow" in  args.preprocessing["text_processing"]["method"]:
-                bow_vectorizer = CountVectorizer()
+                if args.prediction=='Rating':
+                    bow_vectorizer = CountVectorizer(min_df=0.001)
+                else:
+                    bow_vectorizer = CountVectorizer()
                 text_data = data[text_feature.columns].apply(lambda x: ' '.join(x.astype(str)), axis=1)
                 if args.prediction!="":
                     bow_matrix = bow_vectorizer.fit_transform(text_data)
@@ -706,12 +712,10 @@ def obtener_probabilidades():
         df_probabilities=pd.DataFrame(probabilities, columns=[f'Probabilidad_Clase_{cls}' for cls in loaded_model.classes_])
         df_output = pd.concat([ round(df_probabilities, 1)], axis=1)
 
-        df_output.to_csv('output.csv', index=False)
-        print(f"Probabilidades guardadas en: {'output.csv'}")
+        df_output.to_csv(f'output/probabilidades.csv', index=False)
+        print(f"Probabilidades guardadas en: {'probabilidades.csv'}")
         print("Clases del modelo cargado:", loaded_model.classes_)
         print("Forma del array de probabilidades:", probabilities.shape)
-        print("Probabilidades para las primeras 10 muestras de test (modelo cargado):")
-        print(probabilities[:10])
         convertir_datos()
     except FileNotFoundError:
         print(
@@ -722,13 +726,13 @@ def obtener_probabilidades():
 def convertir_datos():
 
     try:
-        df = pd.read_csv('output.csv')
+        df = pd.read_csv(f'output/probabilidades.csv')
         if 'Probabilidad_Clase_5' in df.columns:
             columna = ['Probabilidad_Clase_1', 'Probabilidad_Clase_2', 'Probabilidad_Clase_3', 'Probabilidad_Clase_4', 'Probabilidad_Clase_5']
             rating = df[columna]
 
-            rating = ((rating['Probabilidad_Clase_1'] + 2*rating['Probabilidad_Clase_2'] + 3*rating['Probabilidad_Clase_3']
-                 + 4*rating['Probabilidad_Clase_4'] + 5*rating['Probabilidad_Clase_5'])* 9 / 5)
+            rating = (((rating['Probabilidad_Clase_1'] + 2*rating['Probabilidad_Clase_2'] + 3*rating['Probabilidad_Clase_3']
+                 + 4*rating['Probabilidad_Clase_4'] + 5*rating['Probabilidad_Clase_5'])* 9 ) / 5)
 
         elif 'Probabilidad_Clase_1' in df.columns:
 
@@ -746,8 +750,8 @@ def convertir_datos():
                        + 8*rating['Probabilidad_Clase_8'] + 9*rating['Probabilidad_Clase_9']) / 9 )
         df_output = pd.concat([round(rating.rename('Probabilidad'),1)], axis=1)
 
-        df_output.to_csv('escalado.csv', index=False)
-        print(f"Probabilidades guardadas en: {'escalado.csv'}")
+        df_output.to_csv(f'output/ProbabilidadSobre9.csv', index=False)
+        print(f"Probabilidades guardadas en: {'ProbabilidadSobre9.csv'}")
     except Exception as e:
 
         print(Fore.RED + "Error al cargar el archivo" + Fore.RESET)
