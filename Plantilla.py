@@ -735,6 +735,7 @@ def convertir_datos():
                  + 4*rating['Probabilidad_Clase_4'] + 5*rating['Probabilidad_Clase_5'])* 9 ) / 5)
 
         elif 'Probabilidad_Clase_1' in df.columns:
+
             rating = df['Probabilidad_Clase_1'] * 10
             print(rating)
             print(len(rating))
