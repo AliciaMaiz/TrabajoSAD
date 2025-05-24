@@ -10,7 +10,7 @@ import ast
 import os
 import pandas as pd
 
-nombre_csv="ALICIA_FEW_spain_trad_scores.csv"
+nombre_csv="g_portugal_spain_trad_scores.csv"
 df=pd.read_csv(nombre_csv)
 
 ids=[]
@@ -48,6 +48,6 @@ df_evaluacion["scores_media_pred"]=scores_media_predichos
 df_evaluacion["error"]=errores
 
 #guardamos los resultados de la evaluacion en un csv
-df_evaluacion.to_csv("AAAevaluacion_"+os.path.splitext(nombre_csv)[0]+".csv",index=False)
+df_evaluacion.to_csv("evaluacion_"+os.path.splitext(nombre_csv)[0]+".csv",index=False)
 
 print("El csv evaluacion_"+os.path.splitext(nombre_csv)[0]+".csv se ha guardado correctamente.")
