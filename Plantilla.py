@@ -740,6 +740,7 @@ def convertir_datos():
             print(rating)
             print(len(rating))
             print(len(x_traindev))
+
         else:
             columna = ['Probabilidad_Clase_1', 'Probabilidad_Clase_2', 'Probabilidad_Clase_3', 'Probabilidad_Clase_4', 'Probabilidad_Clase_5'
                 , 'Probabilidad_Clase_6', 'Probabilidad_Clase_7', 'Probabilidad_Clase_8', 'Probabilidad_Clase_9']
