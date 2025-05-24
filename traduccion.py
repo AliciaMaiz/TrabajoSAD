@@ -13,14 +13,18 @@ from langchain_core.prompts import PromptTemplate
 from langchain_ollama.llms import OllamaLLM
 import argparse
 
+#USO: python traduccion.py --csv portugal_spain.csv
+
 parser=argparse.ArgumentParser(description='traduccion ollama LLM')
 parser.add_argument('--model', type=str, default='gemma2:2b', help='ollama model name')
 parser.add_argument('--lang', type=str, default='en', help='language')
 parser.add_argument('--split', type=str, default='train', help='split') #esto lo he cambiado (Aitzi dixit)
 parser.add_argument('--sample', type=int, default=-1, help='sample')
+parser.add_argument('--csv', type=str, help='csv a traducir', required=True)
 
-parser.add_argument('--start', type=int, default=400, help='Fila inicial para traducir')
+"""parser.add_argument('--start', type=int, default=400, help='Fila inicial para traducir')
 parser.add_argument('--end', type=int, default=556, help='Fila final para traducir (no inclusiva)')
+"""
 
 args=parser.parse_args()
 #(Aitzi  dixit, aquí complicad el prompt lo que necesitéis para evitar la verbosity)
@@ -31,16 +35,14 @@ prompt = PromptTemplate.from_template(template)
 model = OllamaLLM(model=args.model,temperature=0) #deterministic (Aitzi dixit, esto también hay que modificarlo para que no se limite a devolver solo una palabra. temperature=0 es para que sea determinista y siempre de lo mismo)
 chain = prompt | model
 
-nombre_csv="portugal.csv" #csv a traducir
-
 traducciones=[]
-df=pd.read_csv(nombre_csv)
+df=pd.read_csv(args.csv)
 comentarios=[]
 comentarios_columna=[]
 
 for n,fila in df.iterrows():
-    if n < args.start or n >= args.end:
-        continue #salta las filas que no están en el rango
+    """if n < args.start or n >= args.end:
+        continue #salta las filas que no están en el rango"""
 
     print("n: "+str(n))
     print(fila["_id"])
@@ -58,7 +60,8 @@ for n,fila in df.iterrows():
 df_traducido=df.iloc[args.start:args.end].copy()
 df_traducido["comments_traducidos"]=comentarios_columna
 
-nombre_salida_csv=f"{os.path.splitext(nombre_csv)[0]}_trad_{args.start}_{args.end-1}.csv" #nombre del csv en el q se van a guardar los comentarios traducidos
+#nombre_salida_csv=f"{os.path.splitext(args.csv)[0]}_trad_{args.start}_{args.end-1}.csv" #nombre del csv en el q se van a guardar los comentarios traducidos
+nombre_salida_csv=f"{os.path.splitext(args.csv)[0]}_trad.csv"
 
 #guardamos en csv
 df_traducido.to_csv(nombre_salida_csv,index=False)
