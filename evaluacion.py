@@ -10,10 +10,12 @@ import ast
 import os
 import pandas as pd
 
-nombre_csv="t_portugal_spain_trad_scores.csv"
+nombre_csv="ALICIA_FEW_spain_trad_scores.csv"
 df=pd.read_csv(nombre_csv)
 
+ids=[]
 scores_media_reales=[]
+scores_media_predichos=[]
 errores=[]
 
 for n,fila in df.iterrows():
@@ -23,25 +25,29 @@ for n,fila in df.iterrows():
     review_scores=ast.literal_eval(review_scores) #convertimos el string a diccionario
     scores_media_real=review_scores.get("review_scores_value") #obtenemos la media de scores real
     error=None
-    if scores_media_real: #si no es None
+    if scores_media_real and ast.literal_eval(fila["reviews"]): #si scores_media_real no es None y hay reviews
         scores_media_real=scores_media_real*9/10 #convertimos la media real de 0 a 10 a de 0 a 9
         scores_media_pred=fila["scores_media_pred"] #obtenemos la media de scores predicha
         error=(scores_media_pred-scores_media_real)**2 #calculamos el error -> error=(media_predicha-media_real)^2
-    scores_media_reales.append(scores_media_real)
-    errores.append(error)
+        ids.append(fila["_id"])
+        scores_media_reales.append(scores_media_real)
+        scores_media_predichos.append(scores_media_pred)
+        errores.append(error)
 
-errores_validos=[e for e in errores if pd.notna(e)]
+print("De "+str(len(df))+" instancias, evaluamos "+str(len(ids))+" instancias, que son las que tienen el rating real y al menos una review.")
 
-mse=sum(errores_validos)/len(errores_validos) #calculamos el error medio sin tener en cuenta los vacíos (mse=mean squared error)
+mse=sum(errores)/len(errores) #calculamos el error medio sin tener en cuenta los vacíos (mse=mean squared error)
 print("MSE (error cuadrático medio): "+str(mse))
+print("Scores media real: " + str(sum(scores_media_reales)/len(scores_media_reales)))
+print("Scores media predicho: " + str(sum(scores_media_predichos)/len(scores_media_predichos)))
 
 df_evaluacion=pd.DataFrame()
-df_evaluacion["_id"]=df["_id"]
+df_evaluacion["_id"]=ids
 df_evaluacion["scores_media_real"]=scores_media_reales
-df_evaluacion["scores_media_pred"]=df["scores_media_pred"]
+df_evaluacion["scores_media_pred"]=scores_media_predichos
 df_evaluacion["error"]=errores
 
 #guardamos los resultados de la evaluacion en un csv
-df_evaluacion.to_csv("evaluacion_"+os.path.splitext(nombre_csv)[0]+".csv",index=False)
+df_evaluacion.to_csv("AAAevaluacion_"+os.path.splitext(nombre_csv)[0]+".csv",index=False)
 
 print("El csv evaluacion_"+os.path.splitext(nombre_csv)[0]+".csv se ha guardado correctamente.")
