@@ -754,6 +754,7 @@ def convertir_datos():
 
         df_output.to_csv(f'output/ProbabilidadSobre9.csv', index=False)
         print(f"Probabilidades guardadas en: {'ProbabilidadSobre9.csv'}")
+
     except Exception as e:
 
         print(Fore.RED + "Error al cargar el archivo" + Fore.RESET)
