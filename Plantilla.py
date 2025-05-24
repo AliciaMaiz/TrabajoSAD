@@ -734,9 +734,9 @@ def convertir_datos():
             rating = (((rating['Probabilidad_Clase_1'] + 2*rating['Probabilidad_Clase_2'] + 3*rating['Probabilidad_Clase_3']
                  + 4*rating['Probabilidad_Clase_4'] + 5*rating['Probabilidad_Clase_5'])* 9 ) / 5)
 
-        elif 'Probabilidad_Clase_1' in df.columns:
+        elif 'Probabilidad_Clase_1.0' in df.columns:
 
-            rating = df['Probabilidad_Clase_1'] * 9
+            rating = df['Probabilidad_Clase_1.0'] * 9
             print(rating)
             print(len(rating))
             print(len(x_traindev))
