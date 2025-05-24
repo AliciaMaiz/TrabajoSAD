@@ -752,8 +752,8 @@ def convertir_datos():
                        + 8*rating['Probabilidad_Clase_8'] + 9*rating['Probabilidad_Clase_9']) / 9 )
         df_output = pd.concat([round(rating.rename('Probabilidad'),1)], axis=1)
 
-        df_output.to_csv(f'output/ProbabilidadSobre10.csv', index=False)
-        print(f"Probabilidades guardadas en: {'ProbabilidadSobre10.csv'}")
+        df_output.to_csv(f'output/ProbabilidadSobre9.csv', index=False)
+        print(f"Probabilidades guardadas en: {'ProbabilidadSobre9.csv'}")
     except Exception as e:
 
         print(Fore.RED + "Error al cargar el archivo" + Fore.RESET)
