@@ -732,10 +732,11 @@ def convertir_datos():
             rating = df[columna]
 
             rating = (((rating['Probabilidad_Clase_1'] + 2*rating['Probabilidad_Clase_2'] + 3*rating['Probabilidad_Clase_3']
-                 + 4*rating['Probabilidad_Clase_4'] + 5*rating['Probabilidad_Clase_5'])* 9 ) / 5)
+                 + 4*rating['Probabilidad_Clase_4'] + 5*rating['Probabilidad_Clase_5'])* 10 ) / 5)
 
         elif 'Probabilidad_Clase_1' in df.columns:
-            rating = df['Probabilidad_Clase_1'] * 9
+
+            rating = df['Probabilidad_Clase_1'] * 10
             print(rating)
             print(len(rating))
             print(len(x_traindev))
@@ -744,9 +745,9 @@ def convertir_datos():
                 , 'Probabilidad_Clase_6', 'Probabilidad_Clase_7', 'Probabilidad_Clase_8', 'Probabilidad_Clase_9']
             rating = df[columna]
 
-            rating = ((rating['Probabilidad_Clase_1'] + 2*rating['Probabilidad_Clase_2'] + 3*rating['Probabilidad_Clase_3']
+            rating = (((rating['Probabilidad_Clase_1'] + 2*rating['Probabilidad_Clase_2'] + 3*rating['Probabilidad_Clase_3']
                  + 4*rating['Probabilidad_Clase_4'] + 5*rating['Probabilidad_Clase_5'] + 6*rating['Probabilidad_Clase_6'] + 7*rating['Probabilidad_Clase_7']
-                       + 8*rating['Probabilidad_Clase_8'] + 9*rating['Probabilidad_Clase_9']) / 9 )
+                       + 8*rating['Probabilidad_Clase_8'] + 9*rating['Probabilidad_Clase_9']) * 10) / 9 )
         df_output = pd.concat([round(rating.rename('Probabilidad'),1)], axis=1)
 
         df_output.to_csv(f'output/ProbabilidadSobre9.csv', index=False)
