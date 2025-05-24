@@ -5,13 +5,19 @@ Output: evaluacion_portugal_spain_trad_scores.csv (con las columnas _id, scores_
 scores_media_pred y error. La media de los errores se imprime por la terminal. Si el error medio es
 pequeño (cerca de 0), significa que el modelo hace buenas predicciones.
 """
-
+import argparse
 import ast
 import os
 import pandas as pd
 
-nombre_csv="g_portugal_spain_trad_scores.csv"
-df=pd.read_csv(nombre_csv)
+#USO: python evaluacion.py --csv g_portugal_spain_trad_scores.csv
+#     python evaluacion.py --csv t_portugal_spain_trad_scores.csv
+
+parser=argparse.ArgumentParser(description='evaluacion')
+parser.add_argument('--csv', type=str, help='csv a evaluar', required=True)
+args=parser.parse_args()
+
+df=pd.read_csv(args.csv)
 
 ids=[]
 scores_media_reales=[]
@@ -48,6 +54,6 @@ df_evaluacion["scores_media_pred"]=scores_media_predichos
 df_evaluacion["error"]=errores
 
 #guardamos los resultados de la evaluacion en un csv
-df_evaluacion.to_csv("evaluacion_"+os.path.splitext(nombre_csv)[0]+".csv",index=False)
+df_evaluacion.to_csv("evaluacion_"+os.path.splitext(args.csv)[0]+".csv",index=False)
 
-print("El csv evaluacion_"+os.path.splitext(nombre_csv)[0]+".csv se ha guardado correctamente.")
+print("El csv evaluacion_"+os.path.splitext(args.csv)[0]+".csv se ha guardado correctamente.")
